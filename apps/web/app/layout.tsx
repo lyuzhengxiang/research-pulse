@@ -1,10 +1,18 @@
 import type { Metadata } from 'next';
+import { JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/Header';
+import { StatusBar } from '@/components/StatusBar';
+
+const mono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  weight: ['400', '500', '600', '700'],
+});
 
 export const metadata: Metadata = {
-  title: 'Research Pulse',
-  description: 'Realtime tracker for AI/ML papers — from arXiv to GitHub to HN.',
+  title: 'RESEARCH-PULSE',
+  description: 'Live ticker for AI/ML papers: arXiv → GitHub → HN.',
 };
 
 export default function RootLayout({
@@ -13,10 +21,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen font-sans antialiased">
+    <html lang="en" className={mono.variable}>
+      <body className="min-h-screen pb-10 font-mono antialiased">
         <Header />
-        <main className="mx-auto max-w-5xl px-4 py-6">{children}</main>
+        <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+        <StatusBar />
       </body>
     </html>
   );

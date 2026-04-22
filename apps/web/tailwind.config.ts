@@ -5,27 +5,50 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        accent: {
-          50: '#f5f3ff',
-          100: '#ede9fe',
-          400: '#a78bfa',
-          500: '#8b5cf6',
-          600: '#7c3aed',
-          700: '#6d28d9',
+        // Terminal / trading-desk palette.
+        bg: {
+          DEFAULT: '#0b0e14',
+          surface: '#0f1420',
+          raised: '#151b28',
         },
+        border: {
+          DEFAULT: '#1e2636',
+          bright: '#2a3446',
+        },
+        ink: {
+          DEFAULT: '#d4dce8',
+          dim: '#7a8397',
+          muted: '#4d566b',
+        },
+        up: '#00d97e',         // green — positive / pulse
+        warn: '#ffa940',       // amber — HN / caution
+        danger: '#ff5a6e',     // red — surge / alert
+        info: '#60a5fa',       // blue — tags / links
+        violet: '#a78bfa',     // accent purple for pulse bars
       },
       fontFamily: {
-        sans: ['ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
-        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        mono: ['var(--font-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        sans: ['var(--font-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+      },
+      boxShadow: {
+        'inset-border': 'inset 0 0 0 1px #1e2636',
       },
       animation: {
-        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'flash': 'flash 1s ease-out',
+        'tick': 'tick 0.6s ease-out',
+        'blink': 'blink 1.2s infinite steps(2, start)',
+        'scan': 'scan 2s linear infinite',
       },
       keyframes: {
-        flash: {
-          '0%': { backgroundColor: 'rgb(167 139 250 / 0.3)' },
+        tick: {
+          '0%': { backgroundColor: 'rgba(0, 217, 126, 0.25)' },
           '100%': { backgroundColor: 'transparent' },
+        },
+        blink: {
+          '50%': { opacity: '0' },
+        },
+        scan: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
         },
       },
     },

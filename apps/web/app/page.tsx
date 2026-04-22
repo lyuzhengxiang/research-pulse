@@ -61,31 +61,39 @@ export default async function HomePage() {
   const papers = await fetchFeedForUser(user?.id ?? null);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-end justify-between">
+    <div className="space-y-5 text-[13px]">
+      <section className="flex items-end justify-between border-b border-border pb-3">
         <div>
-          <h1 className="text-2xl font-semibold">
-            {user ? 'Your Feed' : 'Recent papers'}
+          <div className="mb-0.5 text-[10px] uppercase tracking-[0.25em] text-ink-muted">
+            $ feed --sort=pulse --limit=30
+          </div>
+          <h1 className="text-ink">
+            <span className="text-ink-muted">//</span>{' '}
+            {user ? 'your personalized feed' : 'latest papers'}
           </h1>
-          <p className="text-sm text-white/60">
+          <p className="text-[11px] text-ink-dim">
             {user
-              ? 'Filtered by your keyword, author, and category subscriptions.'
-              : 'Sign in to personalize with keywords, authors, and categories.'}
+              ? 'filtered by keyword / author / category subscriptions · sorted by pulse velocity'
+              : 'sign in to personalize with keyword / author / category subscriptions'}
           </p>
         </div>
         {user && (
-          <Link href="/settings" className="text-sm text-accent-400 hover:text-accent-300">
-            Manage subscriptions →
+          <Link
+            href="/settings"
+            className="border border-border bg-bg-surface/60 px-2.5 py-1 text-[11px] text-ink-dim transition hover:text-up hover:border-up/50"
+          >
+            ./config ↗
           </Link>
         )}
-      </div>
+      </section>
 
       {papers.length === 0 ? (
-        <div className="rounded-lg border border-white/10 bg-white/5 p-8 text-center text-white/60">
-          No matching papers yet. The worker polls arXiv every 30 minutes.
+        <div className="border border-border bg-bg-surface/60 p-6 text-center text-[12px] text-ink-dim">
+          <span className="animate-blink mr-2">▊</span>
+          no papers match. the worker polls arxiv every 30min.
         </div>
       ) : (
-        <div className="grid gap-3">
+        <div className="space-y-1.5">
           {papers.map((p) => (
             <PulseCard key={p.arxiv_id} paper={p} />
           ))}

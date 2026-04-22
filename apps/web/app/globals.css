@@ -3,17 +3,56 @@
 @tailwind utilities;
 
 :root {
-  --background: 10 10 14;
-  --foreground: 240 240 245;
-  --muted: 40 40 50;
-  --border: 55 55 70;
+  color-scheme: dark;
 }
 
 html, body {
-  background: rgb(var(--background));
-  color: rgb(var(--foreground));
+  background: #0b0e14;
+  color: #d4dce8;
+  font-feature-settings: 'ss01', 'ss02', 'cv01', 'cv09', 'zero';
 }
 
-html {
-  color-scheme: dark;
+/* Thin scrollbar that matches the palette */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a3446 #0b0e14;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #1e2636;
+  border-radius: 0;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #2a3446;
+}
+
+/* Ultra-subtle grid overlay — evokes terminal phosphor without being cheesy */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+    linear-gradient(to right, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+  background-size: 32px 32px;
+  z-index: 0;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+}
+
+/* Terminal-style ASCII bracket wrappers for nav items etc. */
+.ascii-bracket::before { content: '['; color: #4d566b; margin-right: 2px; }
+.ascii-bracket::after  { content: ']'; color: #4d566b; margin-left: 2px; }
+
+/* Selection */
+::selection {
+  background: rgba(0, 217, 126, 0.25);
+  color: #d4dce8;
 }

@@ -24,26 +24,31 @@ export default async function WatchlistPage() {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold">📌 Your watchlist</h1>
-        <p className="text-sm text-white/60">
-          Papers you've starred + any star-surge alerts they triggered.
+    <div className="space-y-6 text-[13px]">
+      <section className="border-b border-border pb-3">
+        <div className="mb-0.5 text-[10px] uppercase tracking-[0.25em] text-ink-muted">
+          $ watchlist --alerts --papers
+        </div>
+        <h1 className="text-ink">
+          <span className="text-ink-muted">//</span> your watchlist
+        </h1>
+        <p className="text-[11px] text-ink-dim">
+          papers you're tracking · alerts fire when a GH-star surge is detected
         </p>
-      </div>
+      </section>
 
       <WatchlistAlerts userId={user.id} />
 
-      <section className="space-y-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-white/60">
-          Starred papers ({papers.length})
-        </h2>
+      <section className="space-y-2">
+        <div className="text-[10px] uppercase tracking-[0.2em] text-ink-muted">
+          // tracked papers <span className="text-ink">({papers.length})</span>
+        </div>
         {papers.length === 0 ? (
-          <div className="rounded-lg border border-white/10 bg-white/5 p-6 text-sm text-white/60">
-            You haven't starred any papers yet. Open a paper and hit ☆ Star.
+          <div className="border border-border bg-bg-surface/60 p-5 text-[12px] text-ink-dim">
+            not tracking anything yet. open a paper and hit <span className="text-up">○ track</span>.
           </div>
         ) : (
-          <div className="grid gap-3">
+          <div className="space-y-1.5">
             {papers.map((p) => (
               <PulseCard key={p.arxiv_id} paper={p} />
             ))}

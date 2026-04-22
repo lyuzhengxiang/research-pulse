@@ -16,9 +16,9 @@ export function SignOutButton() {
   return (
     <button
       onClick={onClick}
-      className="text-white/60 hover:text-white"
+      className="px-2 py-1 text-[12px] tracking-wider text-ink-dim transition hover:text-danger"
     >
-      Sign out
+      <span className="ascii-bracket">LOGOUT</span>
     </button>
   );
 }

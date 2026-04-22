@@ -65,44 +65,44 @@ export function TimelineChart({ arxivId }: { arxivId: string }) {
 
   if (points.length === 0) {
     return (
-      <div className="rounded-lg border border-white/10 bg-white/5 p-8 text-center text-sm text-white/50">
-        No metrics recorded yet. The worker polls every 15 min for active papers.
+      <div className="flex h-32 items-center justify-center border border-border bg-bg-surface/60 text-[11px] tracking-wider text-ink-muted">
+        <span className="animate-blink mr-2">▊</span>
+        awaiting metrics · worker polls every 15min for active papers
       </div>
     );
   }
 
+  const axisTick = { fill: '#7a8397', fontSize: 10, fontFamily: 'inherit' };
+
   return (
-    <div className="h-72 w-full">
+    <div className="h-72 w-full border border-border bg-bg-surface/60 p-2">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={points} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-          <XAxis
-            dataKey="label"
-            tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 11 }}
-            stroke="rgba(255,255,255,0.2)"
-          />
-          <YAxis
-            yAxisId="left"
-            tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 11 }}
-            stroke="rgba(255,255,255,0.2)"
-          />
-          <YAxis
-            yAxisId="right"
-            orientation="right"
-            tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 11 }}
-            stroke="rgba(255,255,255,0.2)"
-          />
+        <LineChart data={points} margin={{ top: 8, right: 8, bottom: 0, left: -10 }}>
+          <CartesianGrid strokeDasharray="2 4" stroke="#1e2636" />
+          <XAxis dataKey="label" tick={axisTick} stroke="#1e2636" />
+          <YAxis yAxisId="left" tick={axisTick} stroke="#1e2636" />
+          <YAxis yAxisId="right" orientation="right" tick={axisTick} stroke="#1e2636" />
           <Tooltip
-            contentStyle={{ background: 'rgba(20,20,28,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6 }}
-            labelStyle={{ color: '#ccc' }}
+            contentStyle={{
+              background: '#0f1420',
+              border: '1px solid #2a3446',
+              borderRadius: 0,
+              fontFamily: 'inherit',
+              fontSize: 11,
+              padding: '6px 10px',
+            }}
+            labelStyle={{ color: '#7a8397' }}
+            itemStyle={{ color: '#d4dce8' }}
           />
-          <Legend wrapperStyle={{ fontSize: 12 }} />
+          <Legend
+            wrapperStyle={{ fontSize: 11, fontFamily: 'inherit', color: '#7a8397' }}
+          />
           <Line
             yAxisId="left"
             type="monotone"
             dataKey="stars"
-            name="GitHub stars"
-            stroke="#a78bfa"
+            name="GH★"
+            stroke="#00d97e"
             strokeWidth={2}
             dot={false}
             connectNulls
@@ -111,8 +111,8 @@ export function TimelineChart({ arxivId }: { arxivId: string }) {
             yAxisId="right"
             type="monotone"
             dataKey="hnScore"
-            name="HN score"
-            stroke="#f97316"
+            name="HN·pts"
+            stroke="#ffa940"
             strokeWidth={2}
             dot={false}
             connectNulls
@@ -121,10 +121,10 @@ export function TimelineChart({ arxivId }: { arxivId: string }) {
             yAxisId="right"
             type="monotone"
             dataKey="hnComments"
-            name="HN comments"
-            stroke="#10b981"
+            name="HN·cmts"
+            stroke="#60a5fa"
             strokeWidth={1.5}
-            strokeDasharray="4 4"
+            strokeDasharray="3 3"
             dot={false}
             connectNulls
           />
@@ -136,11 +136,10 @@ export function TimelineChart({ arxivId }: { arxivId: string }) {
 
 function pointLabel(t: number): string {
   const d = new Date(t);
-  return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  return `${d.getUTCMonth() + 1}/${d.getUTCDate()} ${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
 }
 
 function collapseToSeries(metrics: PaperMetric[]): Point[] {
-  // Bucket by minute; within each bucket, last-wins per metric.
   const buckets = new Map<number, Point>();
   for (const m of metrics) {
     const bucket = Math.floor(new Date(m.recorded_at).getTime() / (60 * 1000)) * 60 * 1000;

@@ -28,31 +28,37 @@ export function SignInForm() {
 
   if (status === 'sent') {
     return (
-      <div className="rounded-lg border border-accent-500/30 bg-accent-500/10 p-4 text-sm">
-        ✨ Magic link sent to <strong>{email}</strong>. Check your inbox and click through to sign in.
+      <div className="border border-up/30 bg-up/5 p-4 text-[12px] text-ink">
+        <div className="mb-1 text-[10px] uppercase tracking-[0.2em] text-up">→ sent</div>
+        magic link sent to <span className="text-up">{email}</span>. check your inbox.
       </div>
     );
   }
 
   return (
     <form onSubmit={onSubmit} className="space-y-3">
-      <input
-        type="email"
-        required
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="you@university.edu"
-        className="w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm focus:border-accent-500 focus:outline-none"
-      />
+      <div className="flex items-center gap-2">
+        <span className="text-ink-muted">$</span>
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@university.edu"
+          className="flex-1 border border-border bg-bg-surface px-2.5 py-1.5 text-[12px] text-ink placeholder:text-ink-muted focus:border-up focus:outline-none"
+        />
+      </div>
       <button
         type="submit"
         disabled={status === 'sending'}
-        className="w-full rounded-md bg-accent-600 px-3 py-2 text-sm font-medium text-white hover:bg-accent-700 disabled:opacity-50"
+        className="w-full border border-up/60 bg-up/10 px-3 py-1.5 text-[11px] tracking-wider text-up transition hover:bg-up/20 disabled:opacity-40"
       >
-        {status === 'sending' ? 'Sending…' : 'Send magic link'}
+        {status === 'sending' ? 'SENDING…' : '→ SEND MAGIC LINK'}
       </button>
       {status === 'error' && (
-        <p className="text-sm text-red-400">Error: {errorMsg}</p>
+        <p className="text-[11px] text-danger">
+          <span className="text-ink-muted">err:</span> {errorMsg}
+        </p>
       )}
     </form>
   );

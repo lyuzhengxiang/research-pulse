@@ -37,13 +37,15 @@ export function AlertBell({ userId }: { userId: string }) {
   }, [userId, supabase]);
 
   return (
-    <Link href="/watchlist" className="relative">
-      <span className="text-white/70 hover:text-white" aria-label="Alerts">🔔</span>
-      {unreadCount > 0 && (
-        <span className="absolute -right-2 -top-2 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-accent-500 px-1 text-[10px] font-bold text-white">
-          {unreadCount > 9 ? '9+' : unreadCount}
-        </span>
-      )}
+    <Link
+      href="/watchlist"
+      className="flex items-center gap-1 px-2 py-1 text-[12px] tracking-wider text-ink-dim transition hover:text-warn"
+      aria-label={`Alerts: ${unreadCount} unread`}
+    >
+      <span className="ascii-bracket">ALERTS</span>
+      <span className={unreadCount > 0 ? 'text-warn' : 'text-ink-muted'}>
+        {unreadCount > 0 ? `·${unreadCount > 9 ? '9+' : unreadCount}` : '·0'}
+      </span>
     </Link>
   );
 }

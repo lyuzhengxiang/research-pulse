@@ -20,13 +20,18 @@ export default async function SettingsPage() {
   const suggestedKeywords = (trending ?? []).map((r) => r.word as string);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">⚙️ Subscriptions</h1>
-        <p className="text-sm text-white/60">
-          Tune what shows up in your feed. Start with a category and a few keywords.
+    <div className="space-y-5 text-[13px]">
+      <section className="border-b border-border pb-3">
+        <div className="mb-0.5 text-[10px] uppercase tracking-[0.25em] text-ink-muted">
+          $ config --user={user.email}
+        </div>
+        <h1 className="text-ink">
+          <span className="text-ink-muted">//</span> subscriptions
+        </h1>
+        <p className="text-[11px] text-ink-dim">
+          tune your feed. start with a category and a few keywords.
         </p>
-      </div>
+      </section>
       <SubscriptionManager
         userId={user.id}
         initialSubscriptions={subscriptions}

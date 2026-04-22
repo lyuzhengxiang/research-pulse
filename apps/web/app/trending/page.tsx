@@ -15,19 +15,25 @@ export default async function TrendingPage() {
   const papers = (data ?? []) as Paper[];
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-semibold">🔥 Trending right now</h1>
-        <p className="text-sm text-white/60">
-          Ranked by pulse score — weighted velocity of GitHub stars + HN discussion over the last 24h.
+    <div className="space-y-5 text-[13px]">
+      <section className="border-b border-border pb-3">
+        <div className="mb-0.5 text-[10px] uppercase tracking-[0.25em] text-ink-muted">
+          $ trending --window=24h --sort=velocity
+        </div>
+        <h1 className="text-ink">
+          <span className="text-ink-muted">//</span> hot right now
+        </h1>
+        <p className="text-[11px] text-ink-dim">
+          ranked by pulse score — weighted velocity of GH★ + HN·pts + HN·cmts over last 24h
         </p>
-      </div>
+      </section>
       {papers.length === 0 ? (
-        <div className="rounded-lg border border-white/10 bg-white/5 p-8 text-center text-white/60">
-          No active papers yet.
+        <div className="border border-border bg-bg-surface/60 p-6 text-center text-[12px] text-ink-dim">
+          <span className="animate-blink mr-2">▊</span>
+          no active papers yet
         </div>
       ) : (
-        <div className="grid gap-3">
+        <div className="space-y-1.5">
           {papers.map((p) => (
             <PulseCard key={p.arxiv_id} paper={p} />
           ))}

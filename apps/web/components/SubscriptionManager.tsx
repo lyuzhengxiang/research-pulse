@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { cn } from '@/lib/utils';
 import type { SubscriptionType, UserSubscription } from '@research-pulse/shared';
 
 export function SubscriptionManager({
@@ -60,16 +61,19 @@ export function SubscriptionManager({
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2 border-b border-white/10">
+      <div className="flex gap-0 border-b border-border">
         {(['keyword', 'author', 'category'] as SubscriptionType[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-3 py-2 text-sm capitalize ${
-              tab === t ? 'border-b-2 border-accent-500 text-white' : 'text-white/50 hover:text-white'
-            }`}
+            className={cn(
+              'px-3 py-2 text-[11px] uppercase tracking-[0.2em] transition border-b-2',
+              tab === t
+                ? 'border-up text-up'
+                : 'border-transparent text-ink-dim hover:text-ink',
+            )}
           >
-            {t}s ({values(t).length})
+            {t}.{values(t).length}
           </button>
         ))}
       </div>
@@ -77,6 +81,7 @@ export function SubscriptionManager({
       {tab === 'keyword' && (
         <div className="space-y-3">
           <div className="flex gap-2">
+            <span className="self-center text-[13px] text-ink-muted">$</span>
             <input
               value={draftKeyword}
               onChange={(e) => setDraftKeyword(e.target.value)}
@@ -86,8 +91,8 @@ export function SubscriptionManager({
                   setDraftKeyword('');
                 }
               }}
-              placeholder="e.g. diffusion, mamba, RLHF"
-              className="flex-1 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm"
+              placeholder="add_keyword  # e.g. diffusion, mamba, RLHF"
+              className="flex-1 border border-border bg-bg-surface px-2.5 py-1.5 text-[12px] text-ink placeholder:text-ink-muted focus:border-up focus:outline-none"
             />
             <button
               onClick={() => {
@@ -95,18 +100,18 @@ export function SubscriptionManager({
                 setDraftKeyword('');
               }}
               disabled={isPending || !draftKeyword.trim()}
-              className="rounded-md bg-accent-600 px-3 py-2 text-sm text-white hover:bg-accent-700 disabled:opacity-40"
+              className="border border-up/60 bg-up/10 px-3 py-1.5 text-[11px] tracking-wider text-up transition hover:bg-up/20 disabled:opacity-30"
             >
-              Add
+              ADD
             </button>
           </div>
           <ChipList values={values('keyword')} onRemove={(v) => remove('keyword', v)} />
           {suggestedKeywords.length > 0 && (
-            <div className="space-y-2">
-              <div className="text-xs uppercase tracking-wide text-white/50">
-                Trending in recent papers
+            <div className="space-y-2 pt-2">
+              <div className="text-[10px] uppercase tracking-[0.2em] text-ink-muted">
+                // trending tokens in recent papers
               </div>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-1">
                 {suggestedKeywords
                   .filter((k) => !values('keyword').includes(k))
                   .slice(0, 30)
@@ -114,7 +119,7 @@ export function SubscriptionManager({
                     <button
                       key={k}
                       onClick={() => add('keyword', k)}
-                      className="rounded-full border border-white/10 bg-white/[0.03] px-2 py-0.5 text-xs text-white/70 hover:border-accent-500/50 hover:text-white"
+                      className="border border-border bg-bg-surface/60 px-1.5 py-0.5 text-[11px] text-ink-dim transition hover:border-up/40 hover:text-up"
                     >
                       + {k}
                     </button>
@@ -128,6 +133,7 @@ export function SubscriptionManager({
       {tab === 'author' && (
         <div className="space-y-3">
           <div className="flex gap-2">
+            <span className="self-center text-[13px] text-ink-muted">$</span>
             <input
               value={draftAuthor}
               onChange={(e) => setDraftAuthor(e.target.value)}
@@ -137,8 +143,8 @@ export function SubscriptionManager({
                   setDraftAuthor('');
                 }
               }}
-              placeholder="e.g. Yann LeCun (exact name as on arXiv)"
-              className="flex-1 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm"
+              placeholder="add_author  # exact name as on arXiv (e.g. Yann LeCun)"
+              className="flex-1 border border-border bg-bg-surface px-2.5 py-1.5 text-[12px] text-ink placeholder:text-ink-muted focus:border-up focus:outline-none"
             />
             <button
               onClick={() => {
@@ -146,9 +152,9 @@ export function SubscriptionManager({
                 setDraftAuthor('');
               }}
               disabled={isPending || !draftAuthor.trim()}
-              className="rounded-md bg-accent-600 px-3 py-2 text-sm text-white hover:bg-accent-700 disabled:opacity-40"
+              className="border border-up/60 bg-up/10 px-3 py-1.5 text-[11px] tracking-wider text-up transition hover:bg-up/20 disabled:opacity-30"
             >
-              Add
+              ADD
             </button>
           </div>
           <ChipList values={values('author')} onRemove={(v) => remove('author', v)} />
@@ -156,26 +162,25 @@ export function SubscriptionManager({
       )}
 
       {tab === 'category' && (
-        <div className="space-y-3">
-          <div className="flex flex-wrap gap-2">
-            {availableCategories.map((c) => {
-              const on = values('category').includes(c);
-              return (
-                <button
-                  key={c}
-                  onClick={() => (on ? remove('category', c) : add('category', c))}
-                  className={`rounded-md border px-3 py-1.5 text-sm transition ${
-                    on
-                      ? 'border-accent-500 bg-accent-500/20 text-accent-200'
-                      : 'border-white/10 bg-white/5 hover:bg-white/10'
-                  }`}
-                >
-                  {on ? '✓ ' : ''}
-                  {c}
-                </button>
-              );
-            })}
-          </div>
+        <div className="flex flex-wrap gap-2">
+          {availableCategories.map((c) => {
+            const on = values('category').includes(c);
+            return (
+              <button
+                key={c}
+                onClick={() => (on ? remove('category', c) : add('category', c))}
+                className={cn(
+                  'border px-3 py-1.5 text-[11px] tracking-wider transition',
+                  on
+                    ? 'border-up/60 bg-up/10 text-up'
+                    : 'border-border bg-bg-surface/60 text-ink-dim hover:text-ink hover:border-bright',
+                )}
+              >
+                {on ? '● ' : '○ '}
+                {c}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
@@ -190,19 +195,19 @@ function ChipList({
   onRemove: (v: string) => void;
 }) {
   if (values.length === 0) {
-    return <div className="text-sm text-white/40">Nothing added yet.</div>;
+    return <div className="text-[11px] text-ink-muted">// nothing added yet</div>;
   }
   return (
-    <div className="flex flex-wrap gap-1.5">
+    <div className="flex flex-wrap gap-1">
       {values.map((v) => (
         <span
           key={v}
-          className="flex items-center gap-1 rounded-full border border-accent-500/30 bg-accent-500/10 px-2 py-0.5 text-xs"
+          className="flex items-center gap-1 border border-up/40 bg-up/10 px-2 py-0.5 text-[11px] text-up"
         >
           {v}
           <button
             onClick={() => onRemove(v)}
-            className="text-white/60 hover:text-white"
+            className="text-ink-dim transition hover:text-danger"
             aria-label="Remove"
           >
             ×

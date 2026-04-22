@@ -54,27 +54,27 @@ export function WatchlistAlerts({ userId }: { userId: string }) {
 
   return (
     <section className="space-y-2">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-white/60">
-          Alerts
+      <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em]">
+        <div className="text-ink-muted">
+          // alerts
           {unread.length > 0 && (
-            <span className="ml-2 rounded-full bg-accent-500 px-2 py-0.5 text-[10px] text-white">
-              {unread.length} new
+            <span className="ml-2 bg-warn/20 px-1.5 py-0.5 text-warn">
+              {unread.length} unread
             </span>
           )}
-        </h2>
+        </div>
         {unread.length > 0 && (
-          <button onClick={markAllRead} className="text-xs text-white/60 hover:text-white">
-            Mark all read
+          <button onClick={markAllRead} className="text-ink-dim transition hover:text-ink">
+            mark_all_read ↗
           </button>
         )}
       </div>
       {alerts.length === 0 ? (
-        <div className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-white/60">
-          No alerts yet. Star papers to track them — you'll be notified when their GitHub stars surge.
+        <div className="border border-border bg-bg-surface/60 p-4 text-[12px] text-ink-dim">
+          no alerts. track a paper — you'll be notified when its GH★ surges.
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-1">
           {alerts.map((a) => (
             <AlertRow key={a.id} alert={a} />
           ))}
@@ -86,29 +86,36 @@ export function WatchlistAlerts({ userId }: { userId: string }) {
 
 function AlertRow({ alert }: { alert: UserAlert }) {
   const payload = alert.payload as { stars_gained?: number; ratio?: number | null };
+  const unread = !alert.read_at;
   return (
     <Link
       href={`/paper/${encodeURIComponent(alert.arxiv_id)}`}
-      className={`flex items-center justify-between rounded-md border border-white/10 p-3 text-sm transition hover:border-accent-500/50 ${
-        alert.read_at ? 'bg-white/5' : 'bg-accent-500/10'
+      className={`flex items-center justify-between border-l-2 px-3 py-2 text-[12px] transition ${
+        unread
+          ? 'border-l-danger bg-danger/5 hover:bg-danger/10'
+          : 'border-l-border bg-bg-surface/40 hover:bg-bg-raised'
       }`}
     >
-      <div>
-        <div className="font-mono text-xs text-white/50">{alert.arxiv_id}</div>
-        <div>
+      <div className="flex items-center gap-3">
+        <span className={unread ? 'text-danger' : 'text-ink-muted'}>
+          {unread ? '●' : '○'}
+        </span>
+        <span className="font-mono text-ink-muted">{alert.arxiv_id}</span>
+        <span className="text-ink">
           {alert.alert_type === 'star_surge' ? (
             <>
-              🔥 Star surge — <strong>+{payload.stars_gained}</strong> stars in 1h
-              {payload.ratio && Number.isFinite(payload.ratio) && (
-                <span className="text-white/60"> ({payload.ratio}× baseline)</span>
+              <span className="text-danger">STAR_SURGE</span>{' '}
+              +<span className="tabular-nums text-up">{payload.stars_gained}</span>
+              {payload.ratio && (
+                <span className="text-ink-muted"> · {payload.ratio}× baseline</span>
               )}
             </>
           ) : (
             alert.alert_type
           )}
-        </div>
+        </span>
       </div>
-      <div className="text-xs text-white/40">{formatRelative(alert.created_at)}</div>
+      <span className="text-[11px] text-ink-muted">{formatRelative(alert.created_at)}</span>
     </Link>
   );
 }

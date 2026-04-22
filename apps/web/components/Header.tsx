@@ -2,25 +2,32 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { AlertBell } from './AlertBell';
 import { SignOutButton } from './SignOutButton';
+import { HeaderNavLink } from './HeaderNavLink';
 
 export async function Header() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <header className="border-b border-white/10 bg-black/40 backdrop-blur">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-        <Link href="/" className="flex items-center gap-2 font-mono text-lg font-semibold">
-          <span className="inline-block h-2 w-2 animate-pulse-slow rounded-full bg-accent-500" />
-          Research Pulse
+    <header className="sticky top-0 z-20 border-b border-border bg-bg/85 backdrop-blur-md">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2.5 text-[13px]">
+        <Link href="/" className="group flex items-center gap-2">
+          <span className="inline-block h-1.5 w-1.5 bg-up shadow-[0_0_8px_#00d97e] animate-blink" />
+          <span className="text-ink">
+            <span className="text-ink-dim">$</span>{' '}
+            <span className="font-semibold tracking-wider">RESEARCH-PULSE</span>
+            <span className="text-ink-muted">:~#</span>
+          </span>
         </Link>
-        <nav className="flex items-center gap-4 text-sm">
-          <Link href="/" className="text-white/70 hover:text-white">Feed</Link>
-          <Link href="/trending" className="text-white/70 hover:text-white">Trending</Link>
+
+        <nav className="flex items-center gap-1">
+          <HeaderNavLink href="/">FEED</HeaderNavLink>
+          <HeaderNavLink href="/trending">TRENDING</HeaderNavLink>
+          {user && <HeaderNavLink href="/watchlist">WATCH</HeaderNavLink>}
+          {user && <HeaderNavLink href="/settings">CONFIG</HeaderNavLink>}
           {user && (
             <>
-              <Link href="/watchlist" className="text-white/70 hover:text-white">Watchlist</Link>
-              <Link href="/settings" className="text-white/70 hover:text-white">Settings</Link>
+              <span className="mx-2 text-ink-muted">│</span>
               <AlertBell userId={user.id} />
               <SignOutButton />
             </>
@@ -28,9 +35,9 @@ export async function Header() {
           {!user && (
             <Link
               href="/sign-in"
-              className="rounded-md bg-accent-600 px-3 py-1.5 font-medium text-white hover:bg-accent-700"
+              className="ml-3 border border-up/60 bg-up/10 px-3 py-1 text-up transition hover:bg-up/20"
             >
-              Sign in
+              <span className="text-ink-muted">$</span> login
             </Link>
           )}
         </nav>
