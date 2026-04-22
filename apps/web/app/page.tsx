@@ -13,6 +13,7 @@ async function fetchFeedForUser(userId: string | null): Promise<Paper[]> {
       .from('papers')
       .select('*')
       .order('pulse_score', { ascending: false })
+      .order('published_at', { ascending: false })
       .limit(30);
     return (data ?? []) as Paper[];
   }
@@ -32,6 +33,7 @@ async function fetchFeedForUser(userId: string | null): Promise<Paper[]> {
       .from('papers')
       .select('*')
       .order('pulse_score', { ascending: false })
+      .order('published_at', { ascending: false })
       .limit(30);
     return (data ?? []) as Paper[];
   }
@@ -50,6 +52,7 @@ async function fetchFeedForUser(userId: string | null): Promise<Paper[]> {
     .select('*')
     .or(orFilters.join(','))
     .order('pulse_score', { ascending: false })
+    .order('published_at', { ascending: false })
     .limit(30);
 
   return (data ?? []) as Paper[];
@@ -61,26 +64,26 @@ export default async function HomePage() {
   const papers = await fetchFeedForUser(user?.id ?? null);
 
   return (
-    <div className="space-y-5 text-[13px]">
-      <section className="flex items-end justify-between border-b border-border pb-3">
+    <div className="space-y-6">
+      <section className="flex items-end justify-between border-b border-border pb-4">
         <div>
-          <div className="mb-0.5 text-[10px] uppercase tracking-[0.25em] text-ink-muted">
-            $ feed --sort=pulse --limit=30
+          <div className="mb-1.5 text-xs uppercase tracking-[0.25em] text-ink-dim">
+            $ feed --sort=pulse,recent --limit=30
           </div>
-          <h1 className="text-ink">
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">
             <span className="text-ink-muted">//</span>{' '}
             {user ? 'your personalized feed' : 'latest papers'}
           </h1>
-          <p className="text-[11px] text-ink-dim">
+          <p className="mt-1 text-sm text-ink-dim">
             {user
-              ? 'filtered by keyword / author / category subscriptions · sorted by pulse velocity'
-              : 'sign in to personalize with keyword / author / category subscriptions'}
+              ? 'filtered by your keyword / author / category subs — hot papers first, then newest.'
+              : 'sign in to personalize. signed out, everyone sees the same hot-then-new ordering.'}
           </p>
         </div>
         {user && (
           <Link
             href="/settings"
-            className="border border-border bg-bg-surface/60 px-2.5 py-1 text-[11px] text-ink-dim transition hover:text-up hover:border-up/50"
+            className="border border-border bg-bg-surface px-3 py-1.5 text-xs text-ink-dim transition hover:text-up hover:border-up/50"
           >
             ./config ↗
           </Link>
@@ -88,12 +91,12 @@ export default async function HomePage() {
       </section>
 
       {papers.length === 0 ? (
-        <div className="border border-border bg-bg-surface/60 p-6 text-center text-[12px] text-ink-dim">
+        <div className="border border-border bg-bg-surface p-6 text-center text-sm text-ink-dim">
           <span className="animate-blink mr-2">▊</span>
-          no papers match. the worker polls arxiv every 30min.
+          no papers match. worker polls arxiv every 30 min.
         </div>
       ) : (
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           {papers.map((p) => (
             <PulseCard key={p.arxiv_id} paper={p} />
           ))}

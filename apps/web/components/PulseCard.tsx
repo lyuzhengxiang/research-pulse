@@ -13,6 +13,8 @@ type LatestMetrics = {
   hnComments?: number;
 };
 
+const FRESH_HOURS = 24;
+
 export function PulseCard({ paper: initialPaper }: { paper: Paper }) {
   const [paper, setPaper] = useState<Paper>(initialPaper);
   const [metricHistory, setMetricHistory] = useState<PaperMetric[]>([]);
@@ -110,48 +112,65 @@ export function PulseCard({ paper: initialPaper }: { paper: Paper }) {
   const githubLink = links.find((l) => l.source === 'github');
   const hnLink = links.find((l) => l.source === 'hn');
 
+  const ageHours = (Date.now() - new Date(paper.published_at).getTime()) / 3_600_000;
+  const isFresh = ageHours < FRESH_HOURS;
+  const hasPulse = paper.pulse_score > 0.1;
+
   return (
     <Link
       href={`/paper/${encodeURIComponent(paper.arxiv_id)}`}
       className={cn(
-        'group block border-l-2 border-border bg-bg-surface/60 pl-3 pr-3 py-3 text-[13px] leading-relaxed transition',
+        'group block border-l-2 border-border bg-bg-surface/60 pl-4 pr-4 py-4 transition',
         'hover:border-l-up hover:bg-bg-raised',
         flash && 'animate-tick',
       )}
     >
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-5">
         {/* Left: identifier + title block */}
         <div className="flex-1 min-w-0">
-          <div className="mb-1 flex items-center gap-2 text-[11px] text-ink-dim">
+          <div className="mb-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs">
             <span className="text-info">[{paper.primary_category}]</span>
             <span className="text-ink-muted">{paper.arxiv_id}</span>
             <span className="text-ink-muted">·</span>
-            <span>{formatRelative(paper.published_at)}</span>
+            <span className="text-ink-dim">{formatRelative(paper.published_at)}</span>
+            {isFresh && (
+              <span className="border border-up/50 bg-up/10 px-1.5 py-0.5 text-[10px] tracking-[0.15em] text-up">
+                NEW
+              </span>
+            )}
           </div>
-          <h2 className="truncate text-ink group-hover:text-up">
+          <h2 className="text-base font-semibold leading-snug text-ink group-hover:text-up">
             <span className="text-ink-muted">▸ </span>
             {paper.title}
           </h2>
-          <p className="mt-0.5 truncate text-[11px] text-ink-dim">
+          <p className="mt-1 truncate text-xs text-ink-dim">
             {paper.authors.slice(0, 4).join(', ')}
             {paper.authors.length > 4 && ` +${paper.authors.length - 4}`}
           </p>
           {paper.tldr ? (
-            <p className="mt-1.5 line-clamp-2 text-[12px] text-ink-dim">{paper.tldr}</p>
+            <p className="mt-2 line-clamp-2 text-sm text-ink-dim">{paper.tldr}</p>
           ) : (
-            <p className="mt-1.5 text-[11px] italic text-ink-muted">
+            <p className="mt-2 text-xs italic text-ink-muted">
               <span className="animate-blink">▊</span> generating tldr…
             </p>
           )}
         </div>
 
         {/* Right: live metrics column */}
-        <div className="flex shrink-0 flex-col items-end gap-1 text-[11px]">
-          <PulseReadout score={paper.pulse_score} />
-          <div className="h-6">
-            <Sparkline points={starSeries} width={96} height={22} stroke="#00d97e" />
-          </div>
-          <div className="flex gap-3 text-ink-dim">
+        <div className="flex shrink-0 flex-col items-end gap-1.5 text-xs">
+          {hasPulse ? (
+            <PulseReadout score={paper.pulse_score} />
+          ) : (
+            <span className="text-[10px] tracking-[0.15em] text-ink-muted">
+              {isFresh ? 'AWAITING SIGNAL' : 'NO PULSE'}
+            </span>
+          )}
+          {starSeries.length > 1 && (
+            <div className="h-6">
+              <Sparkline points={starSeries} width={104} height={24} stroke="#26e08a" />
+            </div>
+          )}
+          <div className="flex gap-3">
             <MetricCell
               label="GH"
               value={githubLink ? latest.stars : null}
@@ -201,12 +220,12 @@ function PulseReadout({ score }: { score: number }) {
   const width = Math.min(100, Math.max(6, Math.log10(Math.max(1, score + 1)) * 30));
   const color = hot ? 'bg-danger' : score >= 5 ? 'bg-up' : 'bg-ink-muted';
   return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-ink-muted">PULSE</span>
-      <div className="h-1 w-16 bg-bg-raised">
+    <div className="flex items-center gap-2">
+      <span className="text-[10px] tracking-[0.15em] text-ink-muted">PULSE</span>
+      <div className="h-1.5 w-20 bg-bg-raised">
         <div className={cn('h-full', color)} style={{ width: `${width}%` }} />
       </div>
-      <span className={cn('tabular-nums font-semibold', hot ? 'text-danger' : 'text-up')}>
+      <span className={cn('tabular-nums text-sm font-semibold', hot ? 'text-danger' : 'text-up')}>
         {score.toFixed(1)}
       </span>
     </div>
@@ -215,7 +234,6 @@ function PulseReadout({ score }: { score: number }) {
 
 function aggregateLatest(metrics: PaperMetric[]): LatestMetrics {
   const out: LatestMetrics = {};
-  // metrics sorted ascending; walk from end to pick latest of each kind
   for (let i = metrics.length - 1; i >= 0; i--) {
     const m = metrics[i];
     if (m.metric === 'stars' && out.stars == null) out.stars = m.value;

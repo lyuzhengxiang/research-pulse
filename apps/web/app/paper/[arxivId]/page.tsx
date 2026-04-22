@@ -36,16 +36,16 @@ export default async function PaperPage({ params }: { params: { arxivId: string 
   }
 
   return (
-    <article className="space-y-6 text-[13px]">
+    <article className="space-y-6">
       <Link
         href="/"
-        className="inline-block text-[11px] tracking-wider text-ink-dim transition hover:text-up"
+        className="inline-block text-xs tracking-wider text-ink-dim transition hover:text-up"
       >
         ◀ back to feed
       </Link>
 
-      <header className="space-y-2 border border-border bg-bg-surface/60 p-4">
-        <div className="flex flex-wrap items-center gap-2 text-[11px] text-ink-dim">
+      <header className="space-y-3 border border-border bg-bg-surface p-5">
+        <div className="flex flex-wrap items-center gap-2 text-xs text-ink-dim">
           <span className="text-info">[{paper.primary_category}]</span>
           {paper.categories
             .filter((c) => c !== paper.primary_category)
@@ -67,16 +67,16 @@ export default async function PaperPage({ params }: { params: { arxivId: string 
           <span className="text-ink-muted">│</span>
           <span>submitted {formatRelative(paper.published_at)}</span>
         </div>
-        <h1 className="text-lg font-semibold leading-snug text-ink">
+        <h1 className="text-2xl font-semibold leading-tight text-ink">
           <span className="text-ink-muted">▸ </span>
           {paper.title}
         </h1>
-        <p className="text-[11px] text-ink-dim">
+        <p className="text-sm text-ink-dim">
           {paper.authors.join(', ')}
         </p>
       </header>
 
-      <div className="flex flex-wrap items-center gap-2 text-[12px]">
+      <div className="flex flex-wrap items-center gap-2 text-sm">
         <StarButton arxivId={paper.arxiv_id} initialStarred={starred} userId={user?.id ?? null} />
         <TermLink href={`https://arxiv.org/pdf/${paper.arxiv_id}`}>pdf ↗</TermLink>
         {github && (
@@ -92,22 +92,22 @@ export default async function PaperPage({ params }: { params: { arxivId: string 
       </div>
 
       {paper.tldr && (
-        <section className="border border-up/30 bg-up/5 p-4">
-          <div className="mb-2 text-[10px] uppercase tracking-[0.2em] text-up">
+        <section className="border border-up/30 bg-up/5 p-5">
+          <div className="mb-2 text-xs uppercase tracking-[0.2em] text-up">
             <span className="text-ink-muted">$</span> tldr --gpt-5.4
           </div>
-          <p className="text-ink">{paper.tldr}</p>
+          <p className="text-base text-ink">{paper.tldr}</p>
         </section>
       )}
 
-      <section className="space-y-2">
+      <section className="space-y-3">
         <SectionHeader label="live pulse" subtitle="GH★ + HN·pts + HN·cmts · realtime" />
         <TimelineChart arxivId={paper.arxiv_id} />
       </section>
 
-      <section className="space-y-2">
+      <section className="space-y-3">
         <SectionHeader label="abstract" />
-        <p className="whitespace-pre-line border border-border bg-bg-surface/60 p-4 leading-relaxed text-ink">
+        <p className="whitespace-pre-line border border-border bg-bg-surface p-5 text-sm leading-relaxed text-ink">
           {paper.abstract}
         </p>
       </section>
@@ -134,7 +134,7 @@ function TermLink({
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`border bg-bg-surface/60 px-2.5 py-1 tracking-wide transition ${colorMap[color]}`}
+      className={`border bg-bg-surface px-3 py-1.5 tracking-wide transition ${colorMap[color]}`}
     >
       {children}
     </a>
@@ -143,10 +143,10 @@ function TermLink({
 
 function SectionHeader({ label, subtitle }: { label: string; subtitle?: string }) {
   return (
-    <div className="flex items-baseline gap-2 text-[10px] uppercase tracking-[0.2em]">
+    <div className="flex items-baseline gap-2 text-xs uppercase tracking-[0.2em]">
       <span className="text-ink-muted">//</span>
       <span className="text-ink">{label}</span>
-      {subtitle && <span className="text-ink-muted">— {subtitle}</span>}
+      {subtitle && <span className="text-ink-dim">— {subtitle}</span>}
     </div>
   );
 }

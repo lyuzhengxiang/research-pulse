@@ -97,11 +97,11 @@ export function StatusBar() {
   ).padStart(2, '0')}:${String(now.getUTCSeconds()).padStart(2, '0')} UTC`;
 
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-10 border-t border-border bg-bg/85 text-[11px] tracking-wider backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-1.5">
+    <footer className="fixed bottom-0 left-0 right-0 z-10 border-t border-border bg-bg/90 text-xs tracking-wider backdrop-blur-md">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-2">
         <div className="flex items-center gap-3 text-ink-dim">
           <span className="flex items-center gap-1.5">
-            <span className="inline-block h-1.5 w-1.5 animate-blink bg-up shadow-[0_0_6px_#00d97e]" />
+            <span className="inline-block h-1.5 w-1.5 animate-blink bg-up shadow-[0_0_8px_#26e08a]" />
             <span className="text-up">RAILWAY·WORKER</span>
           </span>
           <span className="text-ink-muted">│</span>
@@ -120,7 +120,7 @@ export function StatusBar() {
             last_poll=<span className="text-ink">{lastPollStr}</span>
           </span>
           <span className="text-ink-muted">│</span>
-          <span className="font-mono text-ink">{clock}</span>
+          <span className="text-ink">{clock}</span>
         </div>
       </div>
     </footer>

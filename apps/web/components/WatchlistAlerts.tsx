@@ -54,11 +54,11 @@ export function WatchlistAlerts({ userId }: { userId: string }) {
 
   return (
     <section className="space-y-2">
-      <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em]">
-        <div className="text-ink-muted">
+      <div className="flex items-center justify-between text-xs uppercase tracking-[0.2em]">
+        <div className="text-ink-dim">
           // alerts
           {unread.length > 0 && (
-            <span className="ml-2 bg-warn/20 px-1.5 py-0.5 text-warn">
+            <span className="ml-2 bg-warn/20 px-2 py-0.5 text-warn">
               {unread.length} unread
             </span>
           )}
@@ -70,7 +70,7 @@ export function WatchlistAlerts({ userId }: { userId: string }) {
         )}
       </div>
       {alerts.length === 0 ? (
-        <div className="border border-border bg-bg-surface/60 p-4 text-[12px] text-ink-dim">
+        <div className="border border-border bg-bg-surface p-4 text-sm text-ink-dim">
           no alerts. track a paper — you'll be notified when its GH★ surges.
         </div>
       ) : (
@@ -90,7 +90,7 @@ function AlertRow({ alert }: { alert: UserAlert }) {
   return (
     <Link
       href={`/paper/${encodeURIComponent(alert.arxiv_id)}`}
-      className={`flex items-center justify-between border-l-2 px-3 py-2 text-[12px] transition ${
+      className={`flex items-center justify-between border-l-2 px-3 py-2.5 text-sm transition ${
         unread
           ? 'border-l-danger bg-danger/5 hover:bg-danger/10'
           : 'border-l-border bg-bg-surface/40 hover:bg-bg-raised'
@@ -100,14 +100,14 @@ function AlertRow({ alert }: { alert: UserAlert }) {
         <span className={unread ? 'text-danger' : 'text-ink-muted'}>
           {unread ? '●' : '○'}
         </span>
-        <span className="font-mono text-ink-muted">{alert.arxiv_id}</span>
+        <span className="text-ink-muted">{alert.arxiv_id}</span>
         <span className="text-ink">
           {alert.alert_type === 'star_surge' ? (
             <>
               <span className="text-danger">STAR_SURGE</span>{' '}
               +<span className="tabular-nums text-up">{payload.stars_gained}</span>
               {payload.ratio && (
-                <span className="text-ink-muted"> · {payload.ratio}× baseline</span>
+                <span className="text-ink-dim"> · {payload.ratio}× baseline</span>
               )}
             </>
           ) : (
@@ -115,7 +115,7 @@ function AlertRow({ alert }: { alert: UserAlert }) {
           )}
         </span>
       </div>
-      <span className="text-[11px] text-ink-muted">{formatRelative(alert.created_at)}</span>
+      <span className="text-xs text-ink-muted">{formatRelative(alert.created_at)}</span>
     </Link>
   );
 }

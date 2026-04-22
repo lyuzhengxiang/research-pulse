@@ -39,7 +39,7 @@ export function AlertBell({ userId }: { userId: string }) {
   return (
     <Link
       href="/watchlist"
-      className="flex items-center gap-1 px-2 py-1 text-[12px] tracking-wider text-ink-dim transition hover:text-warn"
+      className="flex items-center gap-1 px-2 py-1 text-sm tracking-wider text-ink-dim transition hover:text-warn"
       aria-label={`Alerts: ${unreadCount} unread`}
     >
       <span className="ascii-bracket">ALERTS</span>

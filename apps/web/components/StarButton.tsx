@@ -22,7 +22,7 @@ export function StarButton({
     return (
       <button
         onClick={() => router.push('/sign-in')}
-        className="border border-border bg-bg-surface/60 px-2.5 py-1 text-[12px] tracking-wide text-ink-dim transition hover:text-ink hover:border-bright"
+        className="border border-border bg-bg-surface px-3 py-1.5 text-sm tracking-wide text-ink-dim transition hover:text-ink hover:border-bright"
       >
         login_to_track
       </button>
@@ -50,10 +50,10 @@ export function StarButton({
     <button
       onClick={toggle}
       disabled={isPending}
-      className={`border px-2.5 py-1 text-[12px] tracking-wide transition ${
+      className={`border px-3 py-1.5 text-sm tracking-wide transition ${
         starred
           ? 'border-up/60 bg-up/10 text-up'
-          : 'border-border bg-bg-surface/60 text-ink-dim hover:text-ink hover:border-bright'
+          : 'border-border bg-bg-surface text-ink-dim hover:text-ink hover:border-bright'
       }`}
     >
       {starred ? '● tracking' : '○ track'}

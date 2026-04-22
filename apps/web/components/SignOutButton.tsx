@@ -16,7 +16,7 @@ export function SignOutButton() {
   return (
     <button
       onClick={onClick}
-      className="px-2 py-1 text-[12px] tracking-wider text-ink-dim transition hover:text-danger"
+      className="px-2 py-1 text-sm tracking-wider text-ink-dim transition hover:text-danger"
     >
       <span className="ascii-bracket">LOGOUT</span>
     </button>

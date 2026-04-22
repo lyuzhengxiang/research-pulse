@@ -10,15 +10,15 @@ export default async function SignInPage() {
   if (user) redirect('/');
 
   return (
-    <div className="mx-auto max-w-md space-y-4 py-10 text-[13px]">
+    <div className="mx-auto max-w-md space-y-5 py-12">
       <div>
-        <div className="mb-0.5 text-[10px] uppercase tracking-[0.25em] text-ink-muted">
+        <div className="mb-1.5 text-xs uppercase tracking-[0.25em] text-ink-dim">
           $ auth --magic-link
         </div>
-        <h1 className="text-ink">
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">
           <span className="text-ink-muted">//</span> authenticate
         </h1>
-        <p className="text-[11px] text-ink-dim">
+        <p className="mt-1 text-sm text-ink-dim">
           we'll email you a magic link. no password needed.
         </p>
       </div>

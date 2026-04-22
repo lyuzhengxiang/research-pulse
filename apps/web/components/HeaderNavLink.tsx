@@ -17,7 +17,7 @@ export function HeaderNavLink({
     <Link
       href={href}
       className={cn(
-        'px-2 py-1 text-[12px] tracking-wider transition',
+        'px-2 py-1 text-sm tracking-wider transition',
         active
           ? 'text-up'
           : 'text-ink-dim hover:text-ink',

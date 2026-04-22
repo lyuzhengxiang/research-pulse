@@ -7,38 +7,40 @@
 }
 
 html, body {
-  background: #0b0e14;
-  color: #d4dce8;
+  background: #0a0d16;
+  color: #f0f4fa;
   font-feature-settings: 'ss01', 'ss02', 'cv01', 'cv09', 'zero';
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 /* Thin scrollbar that matches the palette */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #2a3446 #0b0e14;
+  scrollbar-color: #3a4663 #0a0d16;
 }
 *::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 *::-webkit-scrollbar-thumb {
-  background: #1e2636;
+  background: #242d44;
   border-radius: 0;
 }
 *::-webkit-scrollbar-thumb:hover {
-  background: #2a3446;
+  background: #3a4663;
 }
 
-/* Ultra-subtle grid overlay — evokes terminal phosphor without being cheesy */
+/* Very subtle grid overlay — present but not noisy */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.012) 1px, transparent 1px),
-    linear-gradient(to right, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
-  background-size: 32px 32px;
+    linear-gradient(to bottom, rgba(170, 180, 208, 0.028) 1px, transparent 1px),
+    linear-gradient(to right, rgba(170, 180, 208, 0.028) 1px, transparent 1px);
+  background-size: 40px 40px;
   z-index: 0;
 }
 
@@ -47,12 +49,11 @@ main {
   z-index: 1;
 }
 
-/* Terminal-style ASCII bracket wrappers for nav items etc. */
-.ascii-bracket::before { content: '['; color: #4d566b; margin-right: 2px; }
-.ascii-bracket::after  { content: ']'; color: #4d566b; margin-left: 2px; }
+/* Terminal-style ASCII bracket wrappers for nav items */
+.ascii-bracket::before { content: '['; color: #6b7795; margin-right: 2px; }
+.ascii-bracket::after  { content: ']'; color: #6b7795; margin-left: 2px; }
 
-/* Selection */
 ::selection {
-  background: rgba(0, 217, 126, 0.25);
-  color: #d4dce8;
+  background: rgba(38, 224, 138, 0.28);
+  color: #f0f4fa;
 }
