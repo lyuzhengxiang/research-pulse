@@ -77,7 +77,7 @@ Step-by-step to get Research Pulse running in production.
 ```bash
 npm install
 cp .env.example apps/web/.env.local   # fill NEXT_PUBLIC_SUPABASE_*
-cp .env.example apps/worker/.env      # fill SUPABASE_URL, service role, github token, anthropic key
+cp .env.example apps/worker/.env      # fill SUPABASE_URL, service role, github token, openai key
 
 # terminal 1
 npm run dev:worker

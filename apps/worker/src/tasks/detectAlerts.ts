@@ -53,9 +53,14 @@ export async function detectStarSurgeAlerts() {
           3600_000,
       );
       const baselinePerHour = (earliestHour.value - earliestPrior.value) / priorHours;
-      const ratio = baselinePerHour > 0 ? gained / baselinePerHour : Infinity;
+      // Ratio branch requires BOTH real growth now AND a non-zero baseline.
+      // Otherwise a 0-star-baseline paper with 0 gain would fire Infinity >= 3
+      // and page users every cooldown window.
+      const ratio = gained > 0 && baselinePerHour > 0 ? gained / baselinePerHour : 0;
+      const absoluteHit = gained >= STAR_SURGE_MIN;
+      const ratioHit = ratio >= STAR_SURGE_RATIO;
 
-      if (gained >= STAR_SURGE_MIN || ratio >= STAR_SURGE_RATIO) {
+      if (absoluteHit || ratioHit) {
         surging.set(arxivId, { gained, ratio });
       }
     }
@@ -83,7 +88,7 @@ export async function detectStarSurgeAlerts() {
         alert_type: 'star_surge' as const,
         payload: {
           stars_gained: surging.get(s.arxiv_id)!.gained,
-          ratio: Number.isFinite(surging.get(s.arxiv_id)!.ratio)
+          ratio: surging.get(s.arxiv_id)!.ratio > 0
             ? Number(surging.get(s.arxiv_id)!.ratio.toFixed(2))
             : null,
           detected_at: nowIso,

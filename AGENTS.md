@@ -80,4 +80,4 @@ See `.env.example`. Web needs `NEXT_PUBLIC_SUPABASE_*`; worker needs service rol
 - **Supabase**: migration applied via Supabase MCP; realtime toggled on 4 tables.
 - **Vercel**: connects to repo, builds `apps/web/`.
 - **Railway**: connects to same repo, builds `apps/worker/`, runs `node dist/index.js`.
-- **Supabase MCP** for dev-time DB operations: `claude mcp add --transport http supabase https://mcp.supabase.com/mcp`.
+- **Supabase MCP** for dev-time DB operations: `Codex mcp add --transport http supabase https://mcp.supabase.com/mcp`.

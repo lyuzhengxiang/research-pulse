@@ -11,19 +11,17 @@ export default async function WatchlistPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/sign-in');
 
-  const [starredRes, papersRes] = await Promise.all([
-    supabase.from('user_starred_papers').select('arxiv_id, starred_at').eq('user_id', user.id),
-    supabase
-      .from('papers')
-      .select('*')
-      .in(
-        'arxiv_id',
-        (
-          await supabase.from('user_starred_papers').select('arxiv_id').eq('user_id', user.id)
-        ).data?.map((r) => r.arxiv_id) ?? [],
-      ),
-  ]);
-  const papers = (papersRes.data ?? []) as Paper[];
+  const { data: starredRows } = await supabase
+    .from('user_starred_papers')
+    .select('arxiv_id')
+    .eq('user_id', user.id);
+  const starredIds = (starredRows ?? []).map((r) => r.arxiv_id);
+
+  let papers: Paper[] = [];
+  if (starredIds.length > 0) {
+    const { data } = await supabase.from('papers').select('*').in('arxiv_id', starredIds);
+    papers = (data ?? []) as Paper[];
+  }
 
   return (
     <div className="space-y-8">

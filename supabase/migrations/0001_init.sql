@@ -126,6 +126,15 @@ alter table public.user_subscriptions enable row level security;
 alter table public.user_starred_papers enable row level security;
 alter table public.user_alerts      enable row level security;
 
+-- Drop-then-create so the migration is idempotent when re-run.
+drop policy if exists "papers are readable by everyone" on public.papers;
+drop policy if exists "paper_links are readable by everyone" on public.paper_links;
+drop policy if exists "paper_metrics are readable by everyone" on public.paper_metrics;
+drop policy if exists "users manage own subscriptions" on public.user_subscriptions;
+drop policy if exists "users manage own stars" on public.user_starred_papers;
+drop policy if exists "users read own alerts" on public.user_alerts;
+drop policy if exists "users mark own alerts read" on public.user_alerts;
+
 -- Public read for paper-related tables
 create policy "papers are readable by everyone"
   on public.papers for select using (true);
@@ -163,7 +172,21 @@ create policy "users mark own alerts read"
 -- Realtime: add tables to the supabase_realtime publication
 -- ---------------------------------------------------------------------------
 
-alter publication supabase_realtime add table public.papers;
-alter publication supabase_realtime add table public.paper_links;
-alter publication supabase_realtime add table public.paper_metrics;
-alter publication supabase_realtime add table public.user_alerts;
+-- `alter publication ... add table` errors if the table is already a member,
+-- so guard each with a DO block that checks pg_publication_tables first.
+do $$
+declare
+  t text;
+begin
+  foreach t in array array['papers', 'paper_links', 'paper_metrics', 'user_alerts']
+  loop
+    if not exists (
+      select 1 from pg_publication_tables
+      where pubname = 'supabase_realtime'
+        and schemaname = 'public'
+        and tablename = t
+    ) then
+      execute format('alter publication supabase_realtime add table public.%I', t);
+    end if;
+  end loop;
+end$$;

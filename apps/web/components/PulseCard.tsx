@@ -12,11 +12,18 @@ type LatestMetrics = {
   hnComments?: number;
 };
 
-export function PulseCard({ paper }: { paper: Paper }) {
+export function PulseCard({ paper: initialPaper }: { paper: Paper }) {
+  const [paper, setPaper] = useState<Paper>(initialPaper);
   const [metrics, setMetrics] = useState<LatestMetrics>({});
   const [links, setLinks] = useState<PaperLink[]>([]);
   const [flash, setFlash] = useState(false);
   const supabase = createClient();
+
+  // Keep local state in sync when the parent feed refetches and passes
+  // a new paper object (e.g. after Next.js revalidation).
+  useEffect(() => {
+    setPaper(initialPaper);
+  }, [initialPaper]);
 
   useEffect(() => {
     let mounted = true;
@@ -26,13 +33,13 @@ export function PulseCard({ paper }: { paper: Paper }) {
         supabase
           .from('paper_metrics')
           .select('*')
-          .eq('arxiv_id', paper.arxiv_id)
+          .eq('arxiv_id', initialPaper.arxiv_id)
           .order('recorded_at', { ascending: false })
           .limit(30),
         supabase
           .from('paper_links')
           .select('*')
-          .eq('arxiv_id', paper.arxiv_id),
+          .eq('arxiv_id', initialPaper.arxiv_id),
       ]);
 
       if (!mounted) return;
@@ -42,14 +49,14 @@ export function PulseCard({ paper }: { paper: Paper }) {
     loadInitial();
 
     const channel = supabase
-      .channel(`card:${paper.arxiv_id}`)
+      .channel(`card:${initialPaper.arxiv_id}`)
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
           table: 'paper_metrics',
-          filter: `arxiv_id=eq.${paper.arxiv_id}`,
+          filter: `arxiv_id=eq.${initialPaper.arxiv_id}`,
         },
         (payload) => {
           const m = payload.new as PaperMetric;
@@ -58,13 +65,41 @@ export function PulseCard({ paper }: { paper: Paper }) {
           setTimeout(() => setFlash(false), 1000);
         },
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'papers',
+          filter: `arxiv_id=eq.${initialPaper.arxiv_id}`,
+        },
+        (payload) => {
+          // Picks up tldr fill-in, pulse_score recomputes, is_active flips.
+          setPaper((prev) => ({ ...prev, ...(payload.new as Paper) }));
+        },
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'paper_links',
+          filter: `arxiv_id=eq.${initialPaper.arxiv_id}`,
+        },
+        (payload) => {
+          const link = payload.new as PaperLink;
+          setLinks((prev) =>
+            prev.some((l) => l.id === link.id) ? prev : [...prev, link],
+          );
+        },
+      )
       .subscribe();
 
     return () => {
       mounted = false;
       supabase.removeChannel(channel);
     };
-  }, [paper.arxiv_id, supabase]);
+  }, [initialPaper.arxiv_id, supabase]);
 
   const githubLink = links.find((l) => l.source === 'github');
   const hnLink = links.find((l) => l.source === 'hn');
