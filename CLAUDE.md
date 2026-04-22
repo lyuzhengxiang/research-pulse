@@ -11,7 +11,7 @@ arXiv API           ──┐
 Paperswithcode API    │       Node/TS process
 GitHub REST API       ├──▶    node-cron tasks   ──▶     Postgres + Realtime   ──▶     Next.js 14
 HN Algolia API        │       (poll / tldr /            (6 tables, RLS)                App Router
-Claude API (TLDR)   ──┘        metrics / alerts)                                       Tailwind, Recharts
+OpenAI gpt-5.4 (TLDR) ┘        metrics / alerts)                                       Tailwind, Recharts
                                                                                        Supabase Auth
 ```
 
@@ -23,14 +23,14 @@ A single Node/TypeScript process on Railway running seven scheduled tasks via `n
 | Task | Cron | Responsibility |
 |------|------|----------------|
 | `pollArxivNewPapers` | `*/30 * * * *` | Fetch new papers from AI/ML arXiv categories, upsert `papers` |
-| `generateTldrsForNewPapers` | `*/5 * * * *` | Call Claude API to generate 2–3 line TLDRs |
+| `generateTldrsForNewPapers` | `*/5 * * * *` | Call OpenAI gpt-5.4 to generate 2–3 line TLDRs |
 | `findGithubRepos` | `*/30 * * * *` | Map papers → official GitHub repos via paperswithcode |
 | `pollActivePaperMetrics` | `*/15 * * * *` | Fetch GitHub stars + HN Algolia score/comments for active papers |
 | `detectStarSurgeAlerts` | `*/15 * * * *` | Emit alerts when star velocity spikes on a user's starred paper |
 | `computePulseScore` | `0 * * * *` | Update `papers.pulse_score` from weighted velocity metrics |
 | `deactivateStalePapers` | `0 3 * * *` | Nightly: stop polling papers > 7 days old with no user interest |
 
-Rate limits: GitHub PAT 5k/hr, arXiv 3s inter-request delay, HN Algolia unrestricted, Claude Haiku for TLDR.
+Rate limits: GitHub PAT 5k/hr, arXiv 3s inter-request delay, HN Algolia unrestricted, OpenAI gpt-5.4 for TLDR (optional).
 
 ### Database (`supabase/`)
 Postgres + Realtime. Six tables:
@@ -73,7 +73,7 @@ Realtime pattern: each client subscribes to `postgres_changes` filtered by arxiv
 
 ## Environment variables
 
-See `.env.example`. Web needs `NEXT_PUBLIC_SUPABASE_*`; worker needs service role key, GitHub PAT, and Anthropic key.
+See `.env.example`. Web needs `NEXT_PUBLIC_SUPABASE_*`; worker needs service role key, GitHub PAT, and OpenAI key (optional).
 
 ## Deployment
 

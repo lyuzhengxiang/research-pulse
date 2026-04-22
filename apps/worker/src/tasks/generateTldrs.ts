@@ -1,5 +1,5 @@
 import pLimit from 'p-limit';
-import { generateTldr } from '../clients/claude.js';
+import { generateTldr } from '../clients/openai.js';
 import { supabase, log } from '../db.js';
 import { env } from '../env.js';
 
@@ -28,7 +28,7 @@ export async function generateTldrsForNewPapers() {
 
     // Without a Claude key, just use the first two sentences of the abstract
     // so the UI doesn't show "TLDR generating…" forever.
-    if (!env.ANTHROPIC_API_KEY) {
+    if (!env.OPENAI_API_KEY) {
       let written = 0;
       for (const p of data) {
         const fallback = abstractFallback(p.abstract);
@@ -36,7 +36,7 @@ export async function generateTldrsForNewPapers() {
         await supabase.from('papers').update({ tldr: fallback }).eq('arxiv_id', p.arxiv_id);
         written++;
       }
-      log(task, 'no ANTHROPIC_API_KEY set — used abstract fallback', { written });
+      log(task, 'no OPENAI_API_KEY set — used abstract fallback', { written });
       return;
     }
 

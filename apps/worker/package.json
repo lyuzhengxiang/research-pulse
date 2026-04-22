@@ -12,12 +12,12 @@
     "task:run": "tsx src/runOnce.ts"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.27.3",
     "@research-pulse/shared": "*",
     "@supabase/supabase-js": "^2.45.4",
     "dotenv": "^16.4.5",
     "fast-xml-parser": "^4.4.1",
     "node-cron": "^3.0.3",
+    "openai": "^6.34.0",
     "p-limit": "^6.1.0"
   },
   "devDependencies": {

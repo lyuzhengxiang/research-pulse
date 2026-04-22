@@ -29,9 +29,10 @@ Step-by-step to get Research Pulse running in production.
    ```
 3. Create a **Personal Access Token (classic)** at https://github.com/settings/tokens. Scope: `public_repo`. Save as `GITHUB_TOKEN`.
 
-## 3. Anthropic API key
+## 3. OpenAI API key (optional — for gpt-5.4 TLDRs)
 
-1. Go to [console.anthropic.com](https://console.anthropic.com/), create an API key. Save as `ANTHROPIC_API_KEY`.
+1. Go to [platform.openai.com/api-keys](https://platform.openai.com/api-keys), create an API key. Save as `OPENAI_API_KEY`.
+2. If you skip this, the worker falls back to the first two sentences of each abstract as the TLDR. Everything else still works.
 
 ## 4. Vercel (frontend)
 
@@ -56,7 +57,7 @@ Step-by-step to get Research Pulse running in production.
    - `SUPABASE_URL`
    - `SUPABASE_SERVICE_ROLE_KEY`
    - `GITHUB_TOKEN`
-   - `ANTHROPIC_API_KEY`
+   - `OPENAI_API_KEY` (optional — skip for abstract-fallback TLDRs)
    - (optional) `ARXIV_CATEGORIES=cs.AI,cs.LG,cs.CL,cs.CV,stat.ML`
 4. Deploy. Open the **Deploy logs** — within 30 seconds you should see:
    ```
