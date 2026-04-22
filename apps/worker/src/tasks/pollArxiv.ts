@@ -5,9 +5,12 @@ import { env } from '../env.js';
 export async function pollArxivNewPapers() {
   const task = 'pollArxivNewPapers';
   try {
-    // 26h window captures arxiv's once-per-day release batch reliably
-    // regardless of what time this task fires. Upserts are idempotent.
-    const sinceIso = new Date(Date.now() - 26 * 60 * 60 * 1000).toISOString();
+    // 72h window: arxiv's daily release drops at ~00:30 UTC and papers'
+    // `published` timestamps are from the original submission time, not
+    // the listing time. A wider window guarantees we catch the most
+    // recent batch plus the previous one regardless of when we boot.
+    // Upserts are idempotent so redundant fetches are cheap.
+    const sinceIso = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
     const papers = await fetchRecentPapers({
       categories: env.ARXIV_CATEGORIES,
       maxResults: 100,
