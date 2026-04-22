@@ -5,7 +5,7 @@ import type { Paper } from '@research-pulse/shared';
 export const dynamic = 'force-dynamic';
 
 export default async function TrendingPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data } = await supabase
     .from('papers')
     .select('*')

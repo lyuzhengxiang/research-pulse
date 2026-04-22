@@ -6,7 +6,7 @@ import type { Paper, UserSubscription } from '@research-pulse/shared';
 export const dynamic = 'force-dynamic';
 
 async function fetchFeedForUser(userId: string | null): Promise<Paper[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   if (!userId) {
     const { data } = await supabase
@@ -56,7 +56,7 @@ async function fetchFeedForUser(userId: string | null): Promise<Paper[]> {
 }
 
 export default async function HomePage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const papers = await fetchFeedForUser(user?.id ?? null);
 

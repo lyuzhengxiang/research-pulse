@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function PaperPage({ params }: { params: { arxivId: string } }) {
   const arxivId = decodeURIComponent(params.arxivId);
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const [{ data: paperRow }, { data: linkRows }, { data: { user } }] = await Promise.all([
     supabase.from('papers').select('*').eq('arxiv_id', arxivId).maybeSingle(),
