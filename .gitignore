@@ -30,4 +30,5 @@ coverage/
 # misc
 *.tsbuildinfo
 .turbo/
+.claude/
 .vercel
