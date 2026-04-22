@@ -1,7 +1,11 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { env } from '../env.js';
 
-const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
+let _client: Anthropic | null = null;
+function client(): Anthropic {
+  if (!_client) _client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
+  return _client;
+}
 
 const SYSTEM_PROMPT = `You are a research assistant that writes ultra-concise TLDRs of AI/ML papers.
 Given a title and abstract, produce 2-3 sentences (max 60 words) that answer:
@@ -13,7 +17,7 @@ export async function generateTldr(input: {
   title: string;
   abstract: string;
 }): Promise<string> {
-  const msg = await client.messages.create({
+  const msg = await client().messages.create({
     model: 'claude-haiku-4-5-20251001',
     max_tokens: 180,
     system: SYSTEM_PROMPT,

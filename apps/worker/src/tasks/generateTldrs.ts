@@ -1,9 +1,14 @@
 import pLimit from 'p-limit';
 import { generateTldr } from '../clients/claude.js';
 import { supabase, log } from '../db.js';
+import { env } from '../env.js';
 
 const BATCH_SIZE = 8;
 const CONCURRENCY = 3;
+
+function abstractFallback(abstract: string): string {
+  return (abstract ?? '').split(/(?<=[.!?])\s+/).slice(0, 2).join(' ');
+}
 
 export async function generateTldrsForNewPapers() {
   const task = 'generateTldrsForNewPapers';
@@ -18,6 +23,20 @@ export async function generateTldrsForNewPapers() {
     if (error) throw error;
     if (!data?.length) {
       log(task, 'no papers needing TLDR');
+      return;
+    }
+
+    // Without a Claude key, just use the first two sentences of the abstract
+    // so the UI doesn't show "TLDR generating…" forever.
+    if (!env.ANTHROPIC_API_KEY) {
+      let written = 0;
+      for (const p of data) {
+        const fallback = abstractFallback(p.abstract);
+        if (!fallback) continue;
+        await supabase.from('papers').update({ tldr: fallback }).eq('arxiv_id', p.arxiv_id);
+        written++;
+      }
+      log(task, 'no ANTHROPIC_API_KEY set — used abstract fallback', { written });
       return;
     }
 
@@ -39,7 +58,7 @@ export async function generateTldrsForNewPapers() {
           } catch (e) {
             failed++;
             log(task, 'tldr failed', { arxiv_id: p.arxiv_id, err: (e as Error).message });
-            const fallback = (p.abstract ?? '').split(/(?<=[.!?])\s+/).slice(0, 2).join(' ');
+            const fallback = abstractFallback(p.abstract);
             if (fallback) {
               await supabase.from('papers').update({ tldr: fallback }).eq('arxiv_id', p.arxiv_id);
             }
