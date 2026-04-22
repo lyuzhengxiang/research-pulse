@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 10 10 14;
+  --foreground: 240 240 245;
+  --muted: 40 40 50;
+  --border: 55 55 70;
+}
+
+html, body {
+  background: rgb(var(--background));
+  color: rgb(var(--foreground));
+}
+
+html {
+  color-scheme: dark;
+}
