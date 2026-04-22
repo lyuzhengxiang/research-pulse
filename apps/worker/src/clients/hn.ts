@@ -22,15 +22,15 @@ export async function searchHnForArxivId(arxivId: string): Promise<HnStory | nul
   const hits = (body?.hits ?? []) as any[];
   if (!hits.length) return null;
 
-  // Pick the hit that actually links to this arxiv-id and has the highest points.
+  // Only accept hits whose URL literally contains this arxiv-id.
+  // The Algolia "query" param is a loose fulltext match — without this
+  // filter we'd return random HN stories that happen to mention "arxiv".
   const matches = hits.filter((h) => {
     const u: string = h.url ?? '';
     return u.includes(`arxiv.org/abs/${arxivId}`) || u.includes(`arxiv.org/pdf/${arxivId}`);
   });
-  const best = (matches.length ? matches : hits).sort(
-    (a, b) => (b.points ?? 0) - (a.points ?? 0),
-  )[0];
-  if (!best) return null;
+  if (!matches.length) return null;
+  const best = matches.sort((a, b) => (b.points ?? 0) - (a.points ?? 0))[0];
 
   return {
     story_id: String(best.objectID),
