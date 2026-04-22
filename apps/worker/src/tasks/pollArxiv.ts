@@ -5,7 +5,9 @@ import { env } from '../env.js';
 export async function pollArxivNewPapers() {
   const task = 'pollArxivNewPapers';
   try {
-    const sinceIso = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+    // 26h window captures arxiv's once-per-day release batch reliably
+    // regardless of what time this task fires. Upserts are idempotent.
+    const sinceIso = new Date(Date.now() - 26 * 60 * 60 * 1000).toISOString();
     const papers = await fetchRecentPapers({
       categories: env.ARXIV_CATEGORIES,
       maxResults: 100,
