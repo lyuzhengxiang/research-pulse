@@ -30,6 +30,10 @@ export async function fetchRecentPapers(opts: {
     throw new Error(`arxiv fetch failed: ${res.status} ${res.statusText}`);
   }
   const xml = await res.text();
+  // arxiv returns 200 + plain-text "Rate exceeded" body when throttled.
+  if (xml.length < 200 && !xml.includes('<feed')) {
+    throw new Error(`arxiv returned non-feed response: ${xml.slice(0, 80)}`);
+  }
   const parser = new XMLParser({
     ignoreAttributes: false,
     attributeNamePrefix: '@_',
