@@ -1,14 +1,19 @@
 import pLimit from 'p-limit';
-import { findRepoForArxivId } from '../clients/paperswithcode.js';
+import { fetchHfPaperInfo, githubRepoFromProjectPage } from '../clients/paperswithcode.js';
 import { supabase, log } from '../db.js';
 
 const BATCH_SIZE = 30;
 const CONCURRENCY = 3;
 
+/**
+ * For each recent paper without an HF check yet, hit HuggingFace Papers
+ * API. If a GitHub projectPage is present, record a paper_links row
+ * with source='github'. Always record a 'huggingface' marker so we
+ * don't re-check the same paper forever.
+ */
 export async function findGithubRepos() {
   const task = 'findGithubRepos';
   try {
-    // Look at recent papers that don't yet have a 'github' or 'paperswithcode' link.
     const sinceIso = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
     const { data: recent, error } = await supabase
       .from('papers')
@@ -35,48 +40,48 @@ export async function findGithubRepos() {
     }
 
     const limit = pLimit(CONCURRENCY);
-    let found = 0;
+    let hfFound = 0;
+    let githubFound = 0;
+
     await Promise.all(
       todo.map((arxivId) =>
         limit(async () => {
-          try {
-            const repo = await findRepoForArxivId(arxivId);
-            if (!repo) {
-              // Insert a marker so we don't re-check this paper every run.
-              await supabase.from('paper_links').insert({
-                arxiv_id: arxivId,
-                source: 'paperswithcode',
-                url: 'none',
-                external_id: 'none',
-                metadata: { checked: true, result: 'no_match' },
-              });
-              return;
-            }
-            found++;
-            await supabase.from('paper_links').insert([
-              {
-                arxiv_id: arxivId,
-                source: 'github',
-                url: repo.url,
-                external_id: `${repo.owner}/${repo.name}`,
-                metadata: { owner: repo.owner, name: repo.name, is_official: repo.is_official },
-              },
-              {
-                arxiv_id: arxivId,
-                source: 'paperswithcode',
-                url: `https://paperswithcode.com/paper/arxiv:${arxivId}`,
-                external_id: `${repo.owner}/${repo.name}`,
-                metadata: { checked: true, result: 'found' },
-              },
-            ]);
-          } catch (e) {
-            log(task, 'lookup failed', { arxivId, err: (e as Error).message });
+          const info = await fetchHfPaperInfo(arxivId);
+          if (!info) return; // network error, will retry next run
+
+          // Always record the HF check so we don't re-look up every run.
+          const rows: any[] = [
+            {
+              arxiv_id: arxivId,
+              source: 'paperswithcode',
+              url: info.found ? `https://huggingface.co/papers/${arxivId}` : 'none',
+              external_id: info.found ? arxivId : 'none',
+              metadata: { checked: true, source: 'huggingface', found: info.found, upvotes: info.upvotes },
+            },
+          ];
+          if (info.found) hfFound++;
+
+          const gh = githubRepoFromProjectPage(info.projectPage);
+          if (gh) {
+            githubFound++;
+            rows.push({
+              arxiv_id: arxivId,
+              source: 'github',
+              url: gh.url,
+              external_id: `${gh.owner}/${gh.name}`,
+              metadata: { owner: gh.owner, name: gh.name, via: 'huggingface' },
+            });
+          }
+
+          const { error: insErr } = await supabase.from('paper_links').insert(rows);
+          if (insErr) {
+            log(task, 'insert failed', { arxivId, err: insErr.message });
           }
         }),
       ),
     );
 
-    log(task, 'done', { checked: todo.length, found });
+    log(task, 'done', { checked: todo.length, hfFound, githubFound });
   } catch (err) {
     log(task, 'ERROR', { message: (err as Error).message });
   }

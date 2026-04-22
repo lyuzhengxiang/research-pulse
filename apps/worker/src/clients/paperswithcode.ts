@@ -1,44 +1,71 @@
 /**
- * Paperswithcode has a public API at https://paperswithcode.com/api/v1/
- * For a given arxiv id, we hit /papers/?arxiv_id={id} and then fetch repositories.
+ * Paperswithcode.com was acquired by Hugging Face in early 2026 and
+ * redirects to huggingface.co/papers/trending. We use HuggingFace's
+ * Papers API instead: https://huggingface.co/api/papers/{arxiv_id}
+ *
+ * HF doesn't give us a direct paper→official-repo mapping, but it does
+ * give us:
+ *   - upvotes (live signal of community interest)
+ *   - projectPage (often the paper's own GitHub or landing page)
  */
 
-export type PwcRepo = {
-  url: string;
-  owner: string;
-  name: string;
-  stars: number;
-  is_official: boolean;
+export type HfPaperInfo = {
+  arxiv_id: string;
+  upvotes: number;
+  projectPage: string | null;
+  title: string;
+  found: boolean;
 };
 
-export async function findRepoForArxivId(arxivId: string): Promise<PwcRepo | null> {
-  const searchUrl = `https://paperswithcode.com/api/v1/papers/?arxiv_id=${encodeURIComponent(arxivId)}`;
-  const searchRes = await fetch(searchUrl, {
-    headers: { Accept: 'application/json', 'User-Agent': 'research-pulse/0.1' },
-  });
-  if (!searchRes.ok) return null;
-  const body = (await searchRes.json()) as any;
-  const paper = body?.results?.[0];
-  if (!paper?.id) return null;
+export async function fetchHfPaperInfo(arxivId: string): Promise<HfPaperInfo | null> {
+  const url = `https://huggingface.co/api/papers/${encodeURIComponent(arxivId)}`;
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      headers: { Accept: 'application/json', 'User-Agent': 'research-pulse/0.1' },
+    });
+  } catch {
+    return null;
+  }
+  if (res.status === 404) return { arxiv_id: arxivId, upvotes: 0, projectPage: null, title: '', found: false };
+  if (!res.ok) return null;
 
-  const reposUrl = `https://paperswithcode.com/api/v1/papers/${paper.id}/repositories/`;
-  const reposRes = await fetch(reposUrl, {
-    headers: { Accept: 'application/json', 'User-Agent': 'research-pulse/0.1' },
-  });
-  if (!reposRes.ok) return null;
-  const reposBody = (await reposRes.json()) as any;
-  const repos = (reposBody?.results ?? []) as any[];
-  if (!repos.length) return null;
+  const text = await res.text();
+  if (!text.startsWith('{')) return null;
+  try {
+    const body = JSON.parse(text) as {
+      id?: string;
+      upvotes?: number;
+      projectPage?: string;
+      title?: string;
+      error?: string;
+    };
+    if (body.error) {
+      return { arxiv_id: arxivId, upvotes: 0, projectPage: null, title: '', found: false };
+    }
+    return {
+      arxiv_id: body.id ?? arxivId,
+      upvotes: Number(body.upvotes ?? 0),
+      projectPage: body.projectPage ?? null,
+      title: body.title ?? '',
+      found: true,
+    };
+  } catch {
+    return null;
+  }
+}
 
-  const official = repos.find((r) => r.is_official) ?? repos[0];
-  const urlStr = String(official.url ?? '');
-  const match = urlStr.match(/github\.com\/([^/]+)\/([^/?#]+)/i);
+/**
+ * Try to extract a GitHub repo URL from an HF paper's projectPage.
+ * Returns null if projectPage isn't a GitHub URL.
+ */
+export function githubRepoFromProjectPage(projectPage: string | null): { owner: string; name: string; url: string } | null {
+  if (!projectPage) return null;
+  const match = projectPage.match(/github\.com\/([^/]+)\/([^/?#]+)/i);
   if (!match) return null;
   return {
-    url: urlStr,
+    url: projectPage,
     owner: match[1],
     name: match[2].replace(/\.git$/, ''),
-    stars: Number(official.stars ?? 0),
-    is_official: Boolean(official.is_official),
   };
 }
