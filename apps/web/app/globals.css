@@ -3,57 +3,86 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html, body {
-  background: #0a0d16;
-  color: #f0f4fa;
-  font-feature-settings: 'ss01', 'ss02', 'cv01', 'cv09', 'zero';
+  background: #f1ece1;
+  color: #16110b;
+  font-family: var(--font-serif), 'Cormorant Garamond', Georgia, serif;
   font-size: 15px;
-  line-height: 1.6;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Thin scrollbar that matches the palette */
+/* Tabular numerals on the Almanac's ticker / pulse / star digits */
+.tabnum { font-variant-numeric: tabular-nums; }
+
+/* Striped placeholder used wherever a figure should sit */
+.ph-stripe {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(31, 26, 20, 0.08) 0,
+    rgba(31, 26, 20, 0.08) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+}
+
+/* Body copy — used inside articles for justified, hyphenated paragraphs */
+.almanac-prose {
+  font-family: var(--font-serif), 'Cormorant Garamond', Georgia, serif;
+  font-size: 14px;
+  line-height: 1.62;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.almanac-prose p { margin: 0 0 0.75em; }
+
+/* The drop cap — first paragraph of a body */
+.drop-cap::first-letter {
+  font-family: var(--font-serif), 'Cormorant Garamond', Georgia, serif;
+  font-size: 64px;
+  font-weight: 700;
+  float: left;
+  line-height: 0.85;
+  margin-right: 6px;
+  margin-top: 4px;
+}
+
+.drop-cap-sm::first-letter {
+  font-family: var(--font-serif), 'Cormorant Garamond', Georgia, serif;
+  font-size: 56px;
+  font-weight: 700;
+  float: left;
+  line-height: 0.85;
+  margin-right: 6px;
+  margin-top: 6px;
+}
+
+/* Paper-toned scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #3a4663 #0a0d16;
+  scrollbar-color: #bdb29b #f1ece1;
 }
-*::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-*::-webkit-scrollbar-thumb {
-  background: #242d44;
-  border-radius: 0;
-}
-*::-webkit-scrollbar-thumb:hover {
-  background: #3a4663;
-}
-
-/* Very subtle grid overlay — present but not noisy */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(to bottom, rgba(170, 180, 208, 0.028) 1px, transparent 1px),
-    linear-gradient(to right, rgba(170, 180, 208, 0.028) 1px, transparent 1px);
-  background-size: 40px 40px;
-  z-index: 0;
-}
-
-main {
-  position: relative;
-  z-index: 1;
-}
-
-/* Terminal-style ASCII bracket wrappers for nav items */
-.ascii-bracket::before { content: '['; color: #6b7795; margin-right: 2px; }
-.ascii-bracket::after  { content: ']'; color: #6b7795; margin-left: 2px; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background: #dfd6c2; }
+*::-webkit-scrollbar-thumb:hover { background: #bdb29b; }
 
 ::selection {
-  background: rgba(38, 224, 138, 0.28);
-  color: #f0f4fa;
+  background: rgba(177, 52, 42, 0.22);
+  color: #16110b;
 }
+
+/* Subtle ticker fade — used by the Telegrams column when a new entry inserts */
+@keyframes telegram-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.telegram-in { animation: telegram-in 500ms ease-out both; }
+
+/* Soft underline on link hover, keeping the broadsheet quiet */
+a.almanac-link:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a.almanac-link:hover h1, a.almanac-link:hover h2, a.almanac-link:hover h3 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }

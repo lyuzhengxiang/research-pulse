@@ -1,24 +1,28 @@
 'use client';
 
+import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
 export function SignOutButton() {
+  const [pending, start] = useTransition();
   const router = useRouter();
   const supabase = createClient();
 
-  async function onClick() {
-    await supabase.auth.signOut();
-    router.refresh();
-    router.push('/');
-  }
-
   return (
     <button
-      onClick={onClick}
-      className="px-2 py-1 text-sm tracking-wider text-ink-dim transition hover:text-danger"
+      onClick={() =>
+        start(async () => {
+          await supabase.auth.signOut();
+          router.push('/');
+          router.refresh();
+        })
+      }
+      disabled={pending}
+      className="text-ink-mute transition hover:text-almanac-red disabled:opacity-50"
+      style={{ fontSize: 11 }}
     >
-      <span className="ascii-bracket">LOGOUT</span>
+      sign out ↗
     </button>
   );
 }

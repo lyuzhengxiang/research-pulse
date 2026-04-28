@@ -20,20 +20,22 @@ export default async function SettingsPage() {
   const suggestedKeywords = (trending ?? []).map((r) => r.word as string);
 
   return (
-    <div className="space-y-6">
-      <section className="border-b border-border pb-4">
-        <div className="mb-1.5 text-xs uppercase tracking-[0.25em] text-ink-dim">
-          $ config --user={user.email}
+    <div className="mx-auto max-w-[920px] px-[60px] pb-8 pt-5">
+      <header className="border-b-[3px] border-double border-ink-rule pb-2.5 text-center">
+        <div className="font-mono text-ticker uppercase tracking-kicker text-almanac-red">
+          Form 218-B · Subscriber Preferences
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight text-ink">
-          <span className="text-ink-muted">//</span> subscriptions
+        <h1 className="mt-1 font-serif text-page-title font-bold tracking-lead">
+          Standing Orders
         </h1>
-        <p className="mt-1 text-sm text-ink-dim">
-          tune your feed. start with a category and a few keywords.
-        </p>
-      </section>
+        <div className="mt-0.5 font-serif italic text-[14px]">
+          « To be lodged with the Editor. Effective from the next morning post. »
+        </div>
+      </header>
+
       <SubscriptionManager
         userId={user.id}
+        email={user.email ?? 'reader@unknown'}
         initialSubscriptions={subscriptions}
         availableCategories={AVAILABLE_CATEGORIES}
         suggestedKeywords={suggestedKeywords}

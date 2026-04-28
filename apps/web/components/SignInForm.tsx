@@ -28,38 +28,49 @@ export function SignInForm() {
 
   if (status === 'sent') {
     return (
-      <div className="border border-up/30 bg-up/5 p-4 text-sm text-ink">
-        <div className="mb-1 text-xs uppercase tracking-[0.2em] text-up">→ sent</div>
-        magic link sent to <span className="text-up">{email}</span>. check your inbox.
+      <div className="mt-6 border border-ink-rule bg-paper-2 p-4 text-center font-serif italic text-[15px]">
+        A key has been posted to{' '}
+        <span className="font-semibold not-italic text-almanac-red">{email}</span>. Open the message and follow the link.
       </div>
     );
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3">
-      <div className="flex items-center gap-2">
-        <span className="text-ink-dim">$</span>
+    <form onSubmit={onSubmit} className="mt-6 space-y-3.5">
+      <label className="block">
+        <div className="mb-1.5 font-mono text-ticker uppercase tracking-mono-uc text-ink-mute">
+          Address for delivery
+        </div>
         <input
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@university.edu"
-          className="flex-1 border border-border bg-bg-surface px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:border-up focus:outline-none"
+          placeholder="reader@university.edu"
+          className="w-full border border-ink-rule bg-transparent px-3 py-2 font-serif text-[15px] text-ink placeholder:text-ink-mute focus:outline-none focus:border-almanac-red"
         />
-      </div>
+      </label>
       <button
         type="submit"
         disabled={status === 'sending'}
-        className="w-full border border-up/60 bg-up/10 px-3 py-2 text-sm tracking-wider text-up transition hover:bg-up/20 disabled:opacity-40"
+        className="w-full font-mono text-meta uppercase tracking-[0.2em] disabled:opacity-50"
+        style={{
+          background: '#1f1a14',
+          color: '#f1ece1',
+          padding: '10px 22px',
+          borderRadius: 0,
+        }}
       >
-        {status === 'sending' ? 'SENDING…' : '→ SEND MAGIC LINK'}
+        {status === 'sending' ? 'POSTING…' : 'POST KEY ▶'}
       </button>
       {status === 'error' && (
-        <p className="text-sm text-danger">
-          <span className="text-ink-muted">err:</span> {errorMsg}
+        <p className="font-serif italic text-[13px] text-almanac-red">
+          The Editor regrets: {errorMsg}
         </p>
       )}
+      <p className="pt-2 text-center font-serif italic text-meta text-ink-mute">
+        New readers and existing subscribers alike — one address suffices.
+      </p>
     </form>
   );
 }

@@ -22,9 +22,9 @@ export function StarButton({
     return (
       <button
         onClick={() => router.push('/sign-in')}
-        className="border border-border bg-bg-surface px-3 py-1.5 text-sm tracking-wide text-ink-dim transition hover:text-ink hover:border-bright"
+        className="font-mono text-meta tracking-mono-uc text-ink-mute uppercase hover:text-almanac-red"
       >
-        login_to_track
+        sign in to add to ledger
       </button>
     );
   }
@@ -50,13 +50,10 @@ export function StarButton({
     <button
       onClick={toggle}
       disabled={isPending}
-      className={`border px-3 py-1.5 text-sm tracking-wide transition ${
-        starred
-          ? 'border-up/60 bg-up/10 text-up'
-          : 'border-border bg-bg-surface text-ink-dim hover:text-ink hover:border-bright'
-      }`}
+      className="font-mono text-meta uppercase tracking-mono-uc font-bold transition disabled:opacity-50"
+      style={{ color: starred ? '#16110b' : '#b1342a' }}
     >
-      {starred ? '● tracking' : '○ track'}
+      {starred ? '✓ in your ledger' : '★ add to ledger'}
     </button>
   );
 }

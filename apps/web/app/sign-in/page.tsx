@@ -10,18 +10,18 @@ export default async function SignInPage() {
   if (user) redirect('/');
 
   return (
-    <div className="mx-auto max-w-md space-y-5 py-12">
-      <div>
-        <div className="mb-1.5 text-xs uppercase tracking-[0.25em] text-ink-dim">
-          $ auth --magic-link
+    <div className="mx-auto max-w-[480px] px-9 pb-9 pt-9">
+      <header className="border-b-[3px] border-double border-ink-rule pb-3 text-center">
+        <div className="font-mono text-ticker uppercase tracking-kicker text-almanac-red">
+          Form 100-A · Subscriber Application
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight text-ink">
-          <span className="text-ink-muted">//</span> authenticate
+        <h1 className="mt-1 font-serif text-page-title font-bold tracking-lead">
+          Apply for Subscription
         </h1>
-        <p className="mt-1 text-sm text-ink-dim">
-          we'll email you a magic link. no password needed.
-        </p>
-      </div>
+        <div className="mt-0.5 font-serif italic text-[14px]">
+          « We shall send a key to your address by the next post. »
+        </div>
+      </header>
       <SignInForm />
     </div>
   );

@@ -1,13 +1,14 @@
-import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { PulseCard } from '@/components/PulseCard';
+import { fetchInitialTelegrams } from '@/lib/telegrams';
+import { AlmanacBroadsheet } from '@/components/AlmanacBroadsheet';
 import type { Paper, UserSubscription } from '@research-pulse/shared';
 
 export const dynamic = 'force-dynamic';
 
-async function fetchFeedForUser(userId: string | null): Promise<Paper[]> {
-  const supabase = await createClient();
-
+async function fetchFeedForUser(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string | null,
+): Promise<Paper[]> {
   if (!userId) {
     const { data } = await supabase
       .from('papers')
@@ -61,47 +62,24 @@ async function fetchFeedForUser(userId: string | null): Promise<Paper[]> {
 export default async function HomePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const papers = await fetchFeedForUser(user?.id ?? null);
+  const [papers, telegrams] = await Promise.all([
+    fetchFeedForUser(supabase, user?.id ?? null),
+    fetchInitialTelegrams(supabase, user?.id ?? null),
+  ]);
+
+  const kicker = user ? '— from your standing orders —' : '— for the general reader —';
+  const strapline = user
+    ? 'Today’s papers, ranked by the velocity of the wires you have asked us to watch.'
+    : 'Today’s papers, ranked by velocity across the wires.';
 
   return (
-    <div className="space-y-6">
-      <section className="flex items-end justify-between border-b border-border pb-4">
-        <div>
-          <div className="mb-1.5 text-xs uppercase tracking-[0.25em] text-ink-dim">
-            $ feed --sort=pulse,recent --limit=30
-          </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-ink">
-            <span className="text-ink-muted">//</span>{' '}
-            {user ? 'your personalized feed' : 'latest papers'}
-          </h1>
-          <p className="mt-1 text-sm text-ink-dim">
-            {user
-              ? 'filtered by your keyword / author / category subs — hot papers first, then newest.'
-              : 'sign in to personalize. signed out, everyone sees the same hot-then-new ordering.'}
-          </p>
-        </div>
-        {user && (
-          <Link
-            href="/settings"
-            className="border border-border bg-bg-surface px-3 py-1.5 text-xs text-ink-dim transition hover:text-up hover:border-up/50"
-          >
-            ./config ↗
-          </Link>
-        )}
-      </section>
-
-      {papers.length === 0 ? (
-        <div className="border border-border bg-bg-surface p-6 text-center text-sm text-ink-dim">
-          <span className="animate-blink mr-2">▊</span>
-          no papers match. worker polls arxiv every 30 min.
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {papers.map((p) => (
-            <PulseCard key={p.arxiv_id} paper={p} />
-          ))}
-        </div>
-      )}
-    </div>
+    <AlmanacBroadsheet
+      kicker={kicker}
+      title="The Front Page"
+      strapline={strapline}
+      papers={papers}
+      initialTelegrams={telegrams}
+      userId={user?.id ?? null}
+    />
   );
 }

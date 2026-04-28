@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { PulseCard } from '@/components/PulseCard';
-import { WatchlistAlerts } from '@/components/WatchlistAlerts';
-import type { Paper } from '@research-pulse/shared';
+import { StarredLedger } from '@/components/StarredLedger';
+import { Dispatches } from '@/components/Dispatches';
+import type { Paper, PaperMetric, UserAlert } from '@research-pulse/shared';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,43 +18,95 @@ export default async function WatchlistPage() {
   const starredIds = (starredRows ?? []).map((r) => r.arxiv_id);
 
   let papers: Paper[] = [];
+  let metricsByArxiv: Record<string, PaperMetric[]> = {};
   if (starredIds.length > 0) {
-    const { data } = await supabase.from('papers').select('*').in('arxiv_id', starredIds);
-    papers = (data ?? []) as Paper[];
+    const [{ data: paperRows }, { data: metricRows }] = await Promise.all([
+      supabase.from('papers').select('*').in('arxiv_id', starredIds),
+      supabase
+        .from('paper_metrics')
+        .select('*')
+        .in('arxiv_id', starredIds)
+        .order('recorded_at', { ascending: true }),
+    ]);
+    papers = ((paperRows ?? []) as Paper[]).sort(
+      (a, b) => b.pulse_score - a.pulse_score,
+    );
+    metricsByArxiv = ((metricRows ?? []) as PaperMetric[]).reduce<Record<string, PaperMetric[]>>(
+      (acc, m) => {
+        (acc[m.arxiv_id] ||= []).push(m);
+        return acc;
+      },
+      {},
+    );
   }
 
+  const { data: alertRows } = await supabase
+    .from('user_alerts')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(20);
+  const alerts = (alertRows ?? []) as UserAlert[];
+
+  const titlesById: Record<string, string> = Object.fromEntries(
+    papers.map((p) => [p.arxiv_id, p.title]),
+  );
+  const missingTitleIds = alerts
+    .map((a) => a.arxiv_id)
+    .filter((id) => !titlesById[id]);
+  if (missingTitleIds.length > 0) {
+    const { data } = await supabase
+      .from('papers')
+      .select('arxiv_id,title')
+      .in('arxiv_id', Array.from(new Set(missingTitleIds)));
+    for (const row of (data ?? []) as Array<{ arxiv_id: string; title: string }>) {
+      titlesById[row.arxiv_id] = row.title;
+    }
+  }
+
+  const handle = user.email?.split('@')[0] ?? 'reader';
+  const unreadCount = alerts.filter((a) => !a.read_at).length;
+  const dispatchSentence =
+    unreadCount === 0
+      ? 'no new dispatches'
+      : unreadCount === 1
+      ? '1 new dispatch'
+      : `${unreadCount} new dispatches`;
+
   return (
-    <div className="space-y-7">
-      <section className="border-b border-border pb-4">
-        <div className="mb-1.5 text-xs uppercase tracking-[0.25em] text-ink-dim">
-          $ watchlist --alerts --papers
+    <div className="mx-auto max-w-[1080px] px-10 pb-8 pt-5">
+      <header className="border-b border-ink-rule pb-2.5 text-center">
+        <div className="font-mono text-ticker uppercase tracking-kicker text-ink-mute">
+          For The Attention Of
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight text-ink">
-          <span className="text-ink-muted">//</span> your watchlist
-        </h1>
-        <p className="mt-1 text-sm text-ink-dim">
-          papers you're tracking. alerts fire when a tracked paper's GH★ surges.
-        </p>
-      </section>
-
-      <WatchlistAlerts userId={user.id} />
-
-      <section className="space-y-2">
-        <div className="text-xs uppercase tracking-[0.2em] text-ink-dim">
-          // tracked papers <span className="text-ink">({papers.length})</span>
+        <div className="mt-0.5 font-serif text-subscriber font-bold tracking-lead">
+          Subscriber №&nbsp;{handle}
         </div>
-        {papers.length === 0 ? (
-          <div className="border border-border bg-bg-surface p-5 text-sm text-ink-dim">
-            not tracking anything yet. open a paper and hit <span className="text-up">○ track</span>.
+        <div className="mt-0.5 font-serif italic text-[14px]">
+          {papers.length === 0
+            ? 'no papers under your seal yet'
+            : `${papers.length} paper${papers.length === 1 ? '' : 's'} under your seal`}{' '}
+          · {dispatchSentence}
+        </div>
+      </header>
+
+      <div className="mt-5 grid grid-cols-[1.2fr_1fr] gap-9">
+        <section>
+          <div className="border-b border-ink-rule pb-1 font-mono text-ticker uppercase tracking-kicker">
+            ★ Starred Ledger
           </div>
-        ) : (
-          <div className="space-y-2">
-            {papers.map((p) => (
-              <PulseCard key={p.arxiv_id} paper={p} />
-            ))}
+          <StarredLedger papers={papers} metricsByArxiv={metricsByArxiv} />
+        </section>
+
+        <aside>
+          <div className="border-b border-ink-rule pb-1 font-mono text-ticker uppercase tracking-kicker text-almanac-red">
+            ✉ Dispatches
           </div>
-        )}
-      </section>
+          <div className="mt-2">
+            <Dispatches initial={alerts} userId={user.id} paperTitles={titlesById} />
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }

@@ -3,24 +3,58 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { cn } from '@/lib/utils';
+import { Stamp } from './Stamp';
 import type { SubscriptionType, UserSubscription } from '@research-pulse/shared';
+
+const ARTICLE_LABELS: Record<SubscriptionType, { roman: string; title: string; descriptor: string; color: 'red' | 'blue' | 'brown' }> = {
+  keyword: {
+    roman: 'I',
+    title: 'Keywords of Interest',
+    descriptor:
+      'The Editor shall include any paper whose abstract or title contains the following terms.',
+    color: 'red',
+  },
+  author: {
+    roman: 'II',
+    title: 'Authors to Follow',
+    descriptor:
+      'The Editor shall give standing place to any paper authored by the following correspondents.',
+    color: 'blue',
+  },
+  category: {
+    roman: 'III',
+    title: 'Categories to Circulate',
+    descriptor:
+      'The arXiv categories from which the morning post shall draw. Click to enable.',
+    color: 'brown',
+  },
+};
+
+const DISPATCH_OPTIONS: Array<{ key: string; label: string; defaultOn: boolean }> = [
+  { key: 'star_surge', label: 'On surge in the GitHub readership', defaultOn: true },
+  { key: 'hn_front', label: 'On reaching the Hacker News front page', defaultOn: true },
+  { key: 'new_match', label: 'On every new arrival matching keywords', defaultOn: false },
+  { key: 'morning_post', label: 'Daily morning post at 09:00 UTC', defaultOn: true },
+  { key: 'todays_reading', label: 'Today’s Reading delivered each dawn', defaultOn: true },
+];
 
 export function SubscriptionManager({
   userId,
+  email,
   initialSubscriptions,
   availableCategories,
   suggestedKeywords,
 }: {
   userId: string;
+  email: string;
   initialSubscriptions: UserSubscription[];
   availableCategories: string[];
   suggestedKeywords: string[];
 }) {
   const [subs, setSubs] = useState(initialSubscriptions);
-  const [tab, setTab] = useState<SubscriptionType>('keyword');
   const [draftKeyword, setDraftKeyword] = useState('');
   const [draftAuthor, setDraftAuthor] = useState('');
+  const [savedAt, setSavedAt] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const supabase = createClient();
@@ -29,7 +63,7 @@ export function SubscriptionManager({
     return subs.filter((s) => s.sub_type === type).map((s) => s.value);
   }
 
-  async function add(type: SubscriptionType, value: string) {
+  function add(type: SubscriptionType, value: string) {
     const trimmed = value.trim();
     if (!trimmed || values(type).includes(trimmed)) return;
 
@@ -41,12 +75,13 @@ export function SubscriptionManager({
         .single();
       if (!error && data) {
         setSubs((prev) => [...prev, data as UserSubscription]);
+        setSavedAt(new Date().toISOString());
       }
       router.refresh();
     });
   }
 
-  async function remove(type: SubscriptionType, value: string) {
+  function remove(type: SubscriptionType, value: string) {
     startTransition(async () => {
       await supabase
         .from('user_subscriptions')
@@ -55,165 +90,199 @@ export function SubscriptionManager({
         .eq('sub_type', type)
         .eq('value', value);
       setSubs((prev) => prev.filter((s) => !(s.sub_type === type && s.value === value)));
+      setSavedAt(new Date().toISOString());
       router.refresh();
     });
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex gap-0 border-b border-border">
-        {(['keyword', 'author', 'category'] as SubscriptionType[]).map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={cn(
-              'px-4 py-2.5 text-xs uppercase tracking-[0.2em] transition border-b-2',
-              tab === t
-                ? 'border-up text-up'
-                : 'border-transparent text-ink-dim hover:text-ink',
-            )}
-          >
-            {t}.{values(t).length}
-          </button>
-        ))}
-      </div>
-
-      {tab === 'keyword' && (
-        <div className="space-y-3">
-          <div className="flex gap-2">
-            <span className="self-center text-sm text-ink-dim">$</span>
-            <input
-              value={draftKeyword}
-              onChange={(e) => setDraftKeyword(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  add('keyword', draftKeyword);
-                  setDraftKeyword('');
-                }
-              }}
-              placeholder="add_keyword  # e.g. diffusion, mamba, RLHF"
-              className="flex-1 border border-border bg-bg-surface px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:border-up focus:outline-none"
-            />
-            <button
-              onClick={() => {
+    <>
+      <Article type="keyword">
+        <p className="m-0 mb-2.5 font-serif italic text-[13px] text-[#3a342b]">
+          {ARTICLE_LABELS.keyword.descriptor}
+        </p>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {values('keyword').map((k) => (
+            <Stamp key={k} color="red" onRemove={() => remove('keyword', k)}>
+              {k}
+            </Stamp>
+          ))}
+          <span className="font-mono text-meta text-ink-mute" style={{ padding: '4px 10px' }}>
+            +
+          </span>
+          <input
+            value={draftKeyword}
+            onChange={(e) => setDraftKeyword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
                 add('keyword', draftKeyword);
                 setDraftKeyword('');
-              }}
-              disabled={isPending || !draftKeyword.trim()}
-              className="border border-up/60 bg-up/10 px-4 py-2 text-xs tracking-wider text-up transition hover:bg-up/20 disabled:opacity-30"
-            >
-              ADD
-            </button>
-          </div>
-          <ChipList values={values('keyword')} onRemove={(v) => remove('keyword', v)} />
-          {suggestedKeywords.length > 0 && (
-            <div className="space-y-2 pt-3">
-              <div className="text-xs uppercase tracking-[0.2em] text-ink-dim">
-                // trending tokens in recent papers
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {suggestedKeywords
-                  .filter((k) => !values('keyword').includes(k))
-                  .slice(0, 30)
-                  .map((k) => (
-                    <button
-                      key={k}
-                      onClick={() => add('keyword', k)}
-                      className="border border-border bg-bg-surface px-2 py-0.5 text-xs text-ink-dim transition hover:border-up/40 hover:text-up"
-                    >
-                      + {k}
-                    </button>
-                  ))}
-              </div>
-            </div>
-          )}
+              }
+            }}
+            placeholder="add term, then ↵"
+            className="border-b border-dotted border-ink-rule bg-transparent font-serif italic text-[14px] outline-none placeholder:text-ink-mute"
+            style={{ width: 200, padding: '2px 0' }}
+          />
         </div>
-      )}
+        {suggestedKeywords.length > 0 && (
+          <div className="mt-3.5">
+            <div className="mb-1.5 font-mono text-ticker uppercase tracking-mono-uc text-ink-mute">
+              by way of suggestion
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {suggestedKeywords
+                .filter((k) => !values('keyword').includes(k))
+                .slice(0, 24)
+                .map((k) => (
+                  <button
+                    key={k}
+                    onClick={() => add('keyword', k)}
+                    className="font-mono text-meta text-ink-mute transition hover:text-almanac-red"
+                    style={{ border: '1px dotted #bdb29b', padding: '2px 8px' }}
+                  >
+                    + {k}
+                  </button>
+                ))}
+            </div>
+          </div>
+        )}
+      </Article>
 
-      {tab === 'author' && (
-        <div className="space-y-3">
-          <div className="flex gap-2">
-            <span className="self-center text-sm text-ink-dim">$</span>
-            <input
-              value={draftAuthor}
-              onChange={(e) => setDraftAuthor(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  add('author', draftAuthor);
-                  setDraftAuthor('');
-                }
-              }}
-              placeholder="add_author  # exact name as on arXiv (e.g. Yann LeCun)"
-              className="flex-1 border border-border bg-bg-surface px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:border-up focus:outline-none"
-            />
-            <button
-              onClick={() => {
+      <Article type="author">
+        <p className="m-0 mb-2.5 font-serif italic text-[13px] text-[#3a342b]">
+          {ARTICLE_LABELS.author.descriptor}
+        </p>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {values('author').map((a) => (
+            <Stamp key={a} color="blue" onRemove={() => remove('author', a)}>
+              {a}
+            </Stamp>
+          ))}
+          <span className="font-mono text-meta text-ink-mute" style={{ padding: '4px 10px' }}>
+            +
+          </span>
+          <input
+            value={draftAuthor}
+            onChange={(e) => setDraftAuthor(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
                 add('author', draftAuthor);
                 setDraftAuthor('');
-              }}
-              disabled={isPending || !draftAuthor.trim()}
-              className="border border-up/60 bg-up/10 px-4 py-2 text-xs tracking-wider text-up transition hover:bg-up/20 disabled:opacity-30"
-            >
-              ADD
-            </button>
-          </div>
-          <ChipList values={values('author')} onRemove={(v) => remove('author', v)} />
+              }
+            }}
+            placeholder="add correspondent, then ↵"
+            className="border-b border-dotted border-ink-rule bg-transparent font-serif italic text-[14px] outline-none placeholder:text-ink-mute"
+            style={{ width: 220, padding: '2px 0' }}
+          />
         </div>
-      )}
+      </Article>
 
-      {tab === 'category' && (
-        <div className="flex flex-wrap gap-2">
+      <Article type="category">
+        <p className="m-0 mb-2.5 font-serif italic text-[13px] text-[#3a342b]">
+          {ARTICLE_LABELS.category.descriptor}
+        </p>
+        <div className="flex flex-wrap gap-1.5">
           {availableCategories.map((c) => {
             const on = values('category').includes(c);
-            return (
+            return on ? (
+              <Stamp key={c} color="brown" onRemove={() => remove('category', c)}>
+                {c}
+              </Stamp>
+            ) : (
               <button
                 key={c}
-                onClick={() => (on ? remove('category', c) : add('category', c))}
-                className={cn(
-                  'border px-4 py-2 text-sm tracking-wider transition',
-                  on
-                    ? 'border-up/60 bg-up/10 text-up'
-                    : 'border-border bg-bg-surface text-ink-dim hover:text-ink hover:border-bright',
-                )}
+                onClick={() => add('category', c)}
+                className="font-mono text-meta text-ink-mute transition hover:text-almanac-brown"
+                style={{ border: '1px dotted #bdb29b', padding: '4px 10px' }}
               >
-                {on ? '● ' : '○ '}
-                {c}
+                + {c}
               </button>
             );
           })}
         </div>
-      )}
-    </div>
+      </Article>
+
+      <Article type="dispatches">
+        <p className="m-0 mb-2.5 font-serif italic text-[13px] text-[#3a342b]">
+          The classes of dispatch the Editor shall presume to forward to your address.
+        </p>
+        {DISPATCH_OPTIONS.map((d) => (
+          <div
+            key={d.key}
+            className="flex items-center justify-between border-b border-dotted py-1.5"
+            style={{ borderColor: '#bdb29b' }}
+          >
+            <span className="font-serif text-[15px]">{d.label}</span>
+            <span
+              className="font-mono text-meta font-bold"
+              style={{ color: d.defaultOn ? '#b1342a' : '#6b6055' }}
+            >
+              {d.defaultOn ? '☑ STAMPED' : '☐ withheld'}
+            </span>
+          </div>
+        ))}
+        <p className="mt-2.5 font-serif italic text-meta text-ink-mute">
+          Dispatch preferences are presently fixed by the editor; changes will be admitted in a future issue.
+        </p>
+      </Article>
+
+      <div className="mt-6 flex items-center justify-between border-t-[3px] border-double border-ink-rule pt-3.5">
+        <div className="font-serif italic text-[13px] text-ink-mute">
+          Signed,&nbsp;
+          <span className="font-serif font-semibold not-italic text-ink">
+            {email.split('@')[0]}
+          </span>
+          &nbsp;· {email}
+        </div>
+        <div className="flex items-center gap-3">
+          {savedAt && (
+            <span className="font-mono text-ticker text-ink-mute">
+              {isPending ? 'lodging…' : 'lodged ✓'}
+            </span>
+          )}
+          <span
+            className="font-mono text-meta uppercase tracking-[0.2em]"
+            style={{
+              background: '#1f1a14',
+              color: '#f1ece1',
+              padding: '8px 22px',
+              borderRadius: 0,
+            }}
+          >
+            Lodge With Editor ▶
+          </span>
+        </div>
+      </div>
+    </>
   );
 }
 
-function ChipList({
-  values,
-  onRemove,
+const ALT_BG: Record<string, boolean> = { keyword: true, category: true };
+
+function Article({
+  type,
+  children,
 }: {
-  values: string[];
-  onRemove: (v: string) => void;
+  type: 'keyword' | 'author' | 'category' | 'dispatches';
+  children: React.ReactNode;
 }) {
-  if (values.length === 0) {
-    return <div className="text-sm text-ink-muted">// nothing added yet</div>;
-  }
+  const meta =
+    type === 'dispatches'
+      ? { roman: 'IV', title: 'Dispatches' }
+      : ARTICLE_LABELS[type];
+  const tinted = ALT_BG[type] ?? false;
   return (
-    <div className="flex flex-wrap gap-1.5">
-      {values.map((v) => (
-        <span
-          key={v}
-          className="flex items-center gap-1.5 border border-up/40 bg-up/10 px-2 py-0.5 text-sm text-up"
-        >
-          {v}
-          <button
-            onClick={() => onRemove(v)}
-            className="text-ink-dim transition hover:text-danger"
-            aria-label="Remove"
-          >
-            ×
-          </button>
-        </span>
-      ))}
-    </div>
+    <section
+      className="mt-3.5 border border-ink-rule p-4.5"
+      style={{
+        background: tinted ? '#e9e2d2' : 'transparent',
+        padding: '14px 18px',
+      }}
+    >
+      <div className="mb-2 font-mono text-ticker uppercase tracking-kicker">
+        Article {meta.roman} · {meta.title}
+      </div>
+      {children}
+    </section>
   );
 }

@@ -1,18 +1,25 @@
 import type { Metadata } from 'next';
-import { JetBrains_Mono } from 'next/font/google';
+import { JetBrains_Mono, Cormorant_Garamond } from 'next/font/google';
 import './globals.css';
-import { Header } from '@/components/Header';
-import { StatusBar } from '@/components/StatusBar';
+import { Masthead } from '@/components/Masthead';
+import { Colophon } from '@/components/Colophon';
 
 const mono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
+  weight: ['400', '500', '600'],
+});
+
+const serif = Cormorant_Garamond({
+  subsets: ['latin'],
+  variable: '--font-serif',
   weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
 });
 
 export const metadata: Metadata = {
-  title: 'RESEARCH-PULSE',
-  description: 'Live ticker for AI/ML papers: arXiv → GitHub → HN.',
+  title: 'The Research Almanac',
+  description: 'A daily ledger of papers in motion — arXiv, GitHub, and Hacker News, set in print.',
 };
 
 export default function RootLayout({
@@ -21,11 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={mono.variable}>
-      <body className="min-h-screen pb-10 font-mono antialiased">
-        <Header />
-        <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
-        <StatusBar />
+    <html lang="en" className={`${mono.variable} ${serif.variable}`}>
+      <body className="min-h-screen bg-paper text-ink">
+        <Masthead />
+        <main>{children}</main>
+        <Colophon />
       </body>
     </html>
   );
