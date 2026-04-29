@@ -40,17 +40,18 @@ function isLikelyFigure(src: string): boolean {
 async function fromArxivHtml(arxivId: string): Promise<string | null> {
   const res = await fetchWithTimeout(`https://arxiv.org/html/${arxivId}`);
   if (!res || !res.ok) return null;
-  // arxiv.org/html/{id} 302s to arxiv.org/html/{id}v1/ — relative <img src>
-  // values are relative to that v1 directory, so resolve against res.url
-  // (the post-redirect URL), not the originally requested one. Append a
-  // trailing slash if missing so URL resolution treats it as a directory.
-  const finalUrl = res.url.endsWith('/') ? res.url : res.url + '/';
+  // arxiv writes <img src="{id}v1/x1.png"> at /html/{id}, so resolving against
+  // res.url (no trailing slash — the URL spec drops the last segment, which
+  // is exactly what we need: ".../html/{id}" → base ".../html/" + relative
+  // "{id}v1/x1.png" → ".../html/{id}v1/x1.png"). Adding a trailing slash here
+  // would treat {id} as a directory and produce a doubled-id URL.
+  const baseUrl = res.url;
   const html = await res.text();
   const re = /<img[^>]+src\s*=\s*["']([^"']+)["']/gi;
   for (const m of html.matchAll(re)) {
     const src = m[1];
     if (!isLikelyFigure(src)) continue;
-    return resolveUrl(src, finalUrl);
+    return resolveUrl(src, baseUrl);
   }
   return null;
 }
