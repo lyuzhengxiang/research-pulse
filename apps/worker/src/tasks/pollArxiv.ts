@@ -1,6 +1,7 @@
 import { fetchRecentPapers } from '../clients/arxiv.js';
 import { supabase, log } from '../db.js';
 import { env } from '../env.js';
+import { extractGithubFromText } from '../lib/githubExtract.js';
 
 export async function pollArxivNewPapers() {
   const task = 'pollArxivNewPapers';
@@ -38,7 +39,45 @@ export async function pollArxivNewPapers() {
       .upsert(rows, { onConflict: 'arxiv_id', ignoreDuplicates: false, count: 'exact' });
 
     if (error) throw error;
-    log(task, 'upserted', { attempted: rows.length, upserted: count ?? rows.length });
+
+    // Authors often paste a github URL into the abstract — extract those at
+    // ingestion so pollMetrics can start tracking stars on the very next tick.
+    const githubLinks = papers
+      .map((p) => {
+        const gh = extractGithubFromText(p.abstract);
+        if (!gh) return null;
+        return {
+          arxiv_id: p.arxiv_id,
+          source: 'github' as const,
+          url: gh.url,
+          external_id: `${gh.owner}/${gh.name}`,
+          metadata: { owner: gh.owner, name: gh.name, via: 'arxiv_abstract' },
+        };
+      })
+      .filter((x): x is NonNullable<typeof x> => x !== null);
+
+    let githubAdded = 0;
+    if (githubLinks.length) {
+      const { error: linkErr, count: linkCount } = await supabase
+        .from('paper_links')
+        .upsert(githubLinks, {
+          onConflict: 'arxiv_id,source,external_id',
+          ignoreDuplicates: true,
+          count: 'exact',
+        });
+      if (linkErr) {
+        log(task, 'github link upsert err', { err: linkErr.message });
+      } else {
+        githubAdded = linkCount ?? 0;
+      }
+    }
+
+    log(task, 'upserted', {
+      attempted: rows.length,
+      upserted: count ?? rows.length,
+      githubLinksFound: githubLinks.length,
+      githubLinksNew: githubAdded,
+    });
   } catch (err) {
     log(task, 'ERROR', { message: (err as Error).message });
   }
