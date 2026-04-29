@@ -55,7 +55,7 @@ export function StarredLedger({
 
   if (papers.length === 0) {
     return (
-      <div className="border-b border-dotted border-ink-rule py-4 font-serif text-[14px] text-ink-mute">
+      <div className="border-b border-dotted border-ink-rule py-4 font-serif text-[16px] text-ink-mute">
         <div className="italic">No starred papers yet.</div>
         <div className="mt-1.5 not-italic">
           Browse{' '}
@@ -133,7 +133,7 @@ function LedgerEntry({
         className="almanac-link block border-b border-dotted border-ink-rule py-3"
       >
         <div className="flex items-baseline justify-between">
-          <div className="font-mono uppercase tracking-mono-uc text-ink-mute" style={{ fontSize: 10 }}>
+          <div className="font-mono uppercase tracking-mono-uc text-ink-mute" style={{ fontSize: 12 }}>
             #{String(index + 1).padStart(2, '0')} · {paper.primary_category} · {paper.arxiv_id}
           </div>
           <div className="tabnum font-serif text-list font-bold text-almanac-red">

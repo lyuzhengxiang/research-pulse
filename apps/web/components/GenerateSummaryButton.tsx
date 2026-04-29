@@ -42,7 +42,7 @@ export function GenerateSummaryButton({
       <div className="absolute left-4 -top-2.5 bg-paper px-2 font-mono text-ticker uppercase tracking-kicker text-ink-mute">
         Summary
       </div>
-      <p className="m-0 mb-3 font-serif italic text-[14px] text-ink-mute">
+      <p className="m-0 mb-3 font-serif italic text-[16px] text-ink-mute">
         No summary yet. Generate a 2-3 sentence TLDR with gpt-5.4.
       </p>
       {signedIn ? (
@@ -74,7 +74,7 @@ export function GenerateSummaryButton({
         </Link>
       )}
       {error && (
-        <p className="mt-2.5 font-serif italic text-[13px] text-almanac-red">{error}</p>
+        <p className="mt-2.5 font-serif italic text-[15px] text-almanac-red">{error}</p>
       )}
     </div>
   );

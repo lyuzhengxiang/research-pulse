@@ -82,7 +82,7 @@ export default async function WatchlistPage() {
         <div className="mt-0.5 font-serif text-subscriber font-bold tracking-lead">
           {handle}
         </div>
-        <div className="mt-0.5 font-serif italic text-[14px]">
+        <div className="mt-0.5 font-serif italic text-[16px]">
           {papers.length === 0
             ? 'no starred papers yet'
             : `${papers.length} starred paper${papers.length === 1 ? '' : 's'}`}{' '}

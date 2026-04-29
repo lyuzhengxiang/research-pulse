@@ -25,7 +25,7 @@ export function Stamp({
     >
       <span aria-hidden>·</span>
       <span>{children}</span>
-      {sub && <span className="ml-1 text-ink-mute" style={{ fontSize: 10 }}>{sub}</span>}
+      {sub && <span className="ml-1 text-ink-mute" style={{ fontSize: 12 }}>{sub}</span>}
       {onRemove && (
         <button
           type="button"

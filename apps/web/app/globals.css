@@ -10,7 +10,7 @@ html, body {
   background: #f1ece1;
   color: #16110b;
   font-family: var(--font-serif), 'Cormorant Garamond', Georgia, serif;
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -33,7 +33,7 @@ html, body {
 /* Body copy — used inside articles for justified, hyphenated paragraphs */
 .almanac-prose {
   font-family: var(--font-serif), 'Cormorant Garamond', Georgia, serif;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.62;
   text-align: justify;
   hyphens: auto;

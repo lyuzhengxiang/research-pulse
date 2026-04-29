@@ -18,7 +18,7 @@ export default async function SignInPage() {
         <h1 className="mt-1 font-serif text-page-title font-bold tracking-lead">
           Welcome back
         </h1>
-        <div className="mt-0.5 font-serif italic text-[14px]">
+        <div className="mt-0.5 font-serif italic text-[16px]">
           « We&apos;ll email you a magic link to sign in. »
         </div>
       </header>

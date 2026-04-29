@@ -81,7 +81,7 @@ export default async function PaperPage({
         <h1 className="my-1.5 font-serif text-title-xl font-bold tracking-mast leading-[1.02]">
           {paper.title}
         </h1>
-        <div className="font-serif italic text-[14px]">
+        <div className="font-serif italic text-[16px]">
           By {paper.authors.slice(0, 4).join(', ')}
           {paper.authors.length > 4 && ` and ${paper.authors.length - 4} others`}
         </div>

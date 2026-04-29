@@ -90,7 +90,7 @@ export function SubscriptionManager({
   return (
     <>
       <Article type="keyword">
-        <p className="m-0 mb-2.5 font-serif italic text-[13px] text-[#3a342b]">
+        <p className="m-0 mb-2.5 font-serif italic text-[15px] text-[#3a342b]">
           {ARTICLE_LABELS.keyword.descriptor}
         </p>
         <div className="flex flex-wrap items-center gap-1.5">
@@ -112,7 +112,7 @@ export function SubscriptionManager({
               }
             }}
             placeholder="add term, then ↵"
-            className="border-b border-dotted border-ink-rule bg-transparent font-serif italic text-[14px] outline-none placeholder:text-ink-mute"
+            className="border-b border-dotted border-ink-rule bg-transparent font-serif italic text-[16px] outline-none placeholder:text-ink-mute"
             style={{ width: 200, padding: '2px 0' }}
           />
         </div>
@@ -141,7 +141,7 @@ export function SubscriptionManager({
       </Article>
 
       <Article type="author">
-        <p className="m-0 mb-2.5 font-serif italic text-[13px] text-[#3a342b]">
+        <p className="m-0 mb-2.5 font-serif italic text-[15px] text-[#3a342b]">
           {ARTICLE_LABELS.author.descriptor}
         </p>
         <div className="flex flex-wrap items-center gap-1.5">
@@ -163,14 +163,14 @@ export function SubscriptionManager({
               }
             }}
             placeholder="add author, then ↵"
-            className="border-b border-dotted border-ink-rule bg-transparent font-serif italic text-[14px] outline-none placeholder:text-ink-mute"
+            className="border-b border-dotted border-ink-rule bg-transparent font-serif italic text-[16px] outline-none placeholder:text-ink-mute"
             style={{ width: 220, padding: '2px 0' }}
           />
         </div>
       </Article>
 
       <Article type="category">
-        <p className="m-0 mb-2.5 font-serif italic text-[13px] text-[#3a342b]">
+        <p className="m-0 mb-2.5 font-serif italic text-[15px] text-[#3a342b]">
           {ARTICLE_LABELS.category.descriptor}
         </p>
         <div className="flex flex-wrap gap-1.5">
@@ -195,7 +195,7 @@ export function SubscriptionManager({
       </Article>
 
       <div className="mt-6 flex items-center justify-between border-t-[3px] border-double border-ink-rule pt-3.5">
-        <div className="font-serif italic text-[13px] text-ink-mute">
+        <div className="font-serif italic text-[15px] text-ink-mute">
           Signed in as&nbsp;
           <span className="font-serif font-semibold not-italic text-ink">
             {email.split('@')[0]}

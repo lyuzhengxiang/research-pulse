@@ -45,7 +45,7 @@ export async function AlmanacBroadsheet({
           {kicker}
         </div>
         <h2 className="mt-2 font-serif text-page-title font-bold tracking-lead">{title}</h2>
-        <p className="mt-3 font-serif italic text-[14px] text-ink-mute">
+        <p className="mt-3 font-serif italic text-[16px] text-ink-mute">
           No papers yet. Check back after the next poll.
         </p>
       </div>
@@ -69,7 +69,7 @@ export async function AlmanacBroadsheet({
         <div className="font-mono text-ticker uppercase tracking-kicker text-ink-mute">
           {kicker}
         </div>
-        <div className="font-serif italic text-[13px] text-ink-mute">{strapline}</div>
+        <div className="font-serif italic text-[15px] text-ink-mute">{strapline}</div>
       </div>
 
       <div className="grid grid-cols-[2fr_3fr_2fr] gap-7 border-b border-ink-rule px-10 py-5">
@@ -84,7 +84,7 @@ export async function AlmanacBroadsheet({
               href={`/paper/${encodeURIComponent(p.arxiv_id)}`}
               className="almanac-link block border-b border-dotted border-ink-rule py-2.5"
             >
-              <div className="font-mono uppercase tracking-mono-uc text-ink-mute" style={{ fontSize: 9 }}>
+              <div className="font-mono uppercase tracking-mono-uc text-ink-mute" style={{ fontSize: 11 }}>
                 {p.primary_category} · {relativeAge(p.published_at)} ago
               </div>
               <div className="mt-0.5 font-serif text-list font-semibold leading-tight">
@@ -111,7 +111,7 @@ export async function AlmanacBroadsheet({
               {lead.title}
             </h2>
           </Link>
-          <p className="font-serif italic text-[13px] text-[#3a342b]">
+          <p className="font-serif italic text-[15px] text-[#3a342b]">
             by {lead.authors.slice(0, 3).join(', ')}
             {lead.authors.length > 3 && `, et al`} · published {relativeAge(lead.published_at)} ago
           </p>

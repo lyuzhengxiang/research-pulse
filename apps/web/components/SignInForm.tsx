@@ -28,7 +28,7 @@ export function SignInForm() {
 
   if (status === 'sent') {
     return (
-      <div className="mt-6 border border-ink-rule bg-paper-2 p-4 text-center font-serif italic text-[15px]">
+      <div className="mt-6 border border-ink-rule bg-paper-2 p-4 text-center font-serif italic text-[17px]">
         A magic link has been emailed to{' '}
         <span className="font-semibold not-italic text-almanac-red">{email}</span>. Open the message and click the link to sign in.
       </div>
@@ -47,7 +47,7 @@ export function SignInForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
-          className="w-full border border-ink-rule bg-transparent px-3 py-2 font-serif text-[15px] text-ink placeholder:text-ink-mute focus:outline-none focus:border-almanac-red"
+          className="w-full border border-ink-rule bg-transparent px-3 py-2 font-serif text-[17px] text-ink placeholder:text-ink-mute focus:outline-none focus:border-almanac-red"
         />
       </label>
       <button
@@ -64,7 +64,7 @@ export function SignInForm() {
         {status === 'sending' ? 'SENDING…' : 'SEND MAGIC LINK ▶'}
       </button>
       {status === 'error' && (
-        <p className="font-serif italic text-[13px] text-almanac-red">
+        <p className="font-serif italic text-[15px] text-almanac-red">
           Something went wrong: {errorMsg}
         </p>
       )}

@@ -96,7 +96,7 @@ export function Dispatches({
 
   if (alerts.length === 0) {
     return (
-      <div className="font-serif italic text-[14px] text-ink-mute">
+      <div className="font-serif italic text-[16px] text-ink-mute">
         — no notifications yet —
       </div>
     );
@@ -128,11 +128,11 @@ export function Dispatches({
                 href={`/paper/${encodeURIComponent(a.arxiv_id)}`}
                 className="almanac-link block"
               >
-                <div className="mt-0.5 font-serif text-[15px] font-semibold leading-tight">
+                <div className="mt-0.5 font-serif text-[17px] font-semibold leading-tight">
                   {title ?? a.arxiv_id}
                 </div>
               </Link>
-              <div className="mt-0.5 font-serif italic text-[13px] text-[#3a342b]">
+              <div className="mt-0.5 font-serif italic text-[15px] text-[#3a342b]">
                 — {alertCopy(a)}
               </div>
               <div className="mt-1 font-mono text-ticker text-ink-mute">
@@ -152,7 +152,7 @@ export function Dispatches({
           );
         })}
       </ol>
-      <div className="mt-3 text-center font-serif italic text-[13px] text-ink-mute">
+      <div className="mt-3 text-center font-serif italic text-[15px] text-ink-mute">
         — end of notifications —
       </div>
     </div>

@@ -53,7 +53,7 @@ export function MastheadNav({
             ? 'border-b-2 border-almanac-red text-almanac-red'
             : 'text-almanac-gold hover:text-almanac-red'
         }`}
-        style={{ fontSize: 13, letterSpacing: '0.1em', textTransform: 'none' }}
+        style={{ fontSize: 15, letterSpacing: '0.1em', textTransform: 'none' }}
       >
         ✦ Daily Digest
       </Link>
@@ -71,7 +71,7 @@ export function MastheadNav({
           <Link
             href="/sign-in"
             className="text-ink hover:text-almanac-red"
-            style={{ fontSize: 11 }}
+            style={{ fontSize: 13 }}
           >
             sign in ↗
           </Link>

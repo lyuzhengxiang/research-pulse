@@ -164,7 +164,7 @@ export function Telegrams({
               <span className="block telegram-in border-b border-dotted border-ink-rule py-1.5 leading-snug">
                 <span className="font-mono text-ticker text-ink-mute">{t.ts} ─ </span>
                 <span
-                  className="text-[12px]"
+                  className="text-[14px]"
                   style={{
                     color: KIND_COLOR[t.kind],
                     fontWeight: t.kind === 'star_surge' ? 700 : 400,

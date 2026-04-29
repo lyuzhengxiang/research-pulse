@@ -129,7 +129,7 @@ function Cell({
     <div
       className={`px-2 py-1.5 text-center ${divider ? 'border-l border-ink-rule' : ''}`}
     >
-      <div className="font-mono uppercase tracking-mono-uc text-ink-mute" style={{ fontSize: 9 }}>
+      <div className="font-mono uppercase tracking-mono-uc text-ink-mute" style={{ fontSize: 11 }}>
         {label}
       </div>
       <div

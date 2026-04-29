@@ -19,12 +19,12 @@ export default async function TodayPage() {
         <h1 className="mt-2 font-serif text-today-title font-bold tracking-tight-1">
           Nothing yet today.
         </h1>
-        <p className="mt-3 font-serif italic text-[14px] text-ink-mute">
+        <p className="mt-3 font-serif italic text-[16px] text-ink-mute">
           Today&apos;s digest will appear after the next poll.
         </p>
         <Link
           href="/"
-          className="mt-5 inline-block font-serif italic text-[13px] text-almanac-red"
+          className="mt-5 inline-block font-serif italic text-[15px] text-almanac-red"
         >
           ← back to feed
         </Link>
@@ -41,7 +41,7 @@ export default async function TodayPage() {
         <h1 className="mt-1.5 font-serif text-today-title font-bold tracking-tight-1">
           Daily Digest
         </h1>
-        <div className="mt-1 font-serif italic text-[14px] text-ink-mute">
+        <div className="mt-1 font-serif italic text-[16px] text-ink-mute">
           « Three picks from today&apos;s arXiv papers. Refreshed every morning. »
         </div>
       </header>
@@ -102,7 +102,7 @@ export default async function TodayPage() {
         </div>
       </section>
 
-      <div className="mt-6 text-center font-serif italic text-[13px]">
+      <div className="mt-6 text-center font-serif italic text-[15px]">
         <Link href="/" className="text-almanac-red almanac-link">
           ← back to feed
         </Link>

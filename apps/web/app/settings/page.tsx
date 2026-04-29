@@ -28,7 +28,7 @@ export default async function SettingsPage() {
         <h1 className="mt-1 font-serif text-page-title font-bold tracking-lead">
           Settings
         </h1>
-        <div className="mt-0.5 font-serif italic text-[14px]">
+        <div className="mt-0.5 font-serif italic text-[16px]">
           « Tell us what to put on your feed. Saved automatically. »
         </div>
       </header>

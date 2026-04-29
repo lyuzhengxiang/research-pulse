@@ -155,7 +155,7 @@ export function TarotCard({
           </span>
           <span
             className="font-mono uppercase tracking-[0.2em]"
-            style={{ fontSize: 8, color: F.mute }}
+            style={{ fontSize: 10, color: F.mute }}
           >
             {paper.primary_category}
           </span>
@@ -175,13 +175,13 @@ export function TarotCard({
           </div>
           <div
             className="mt-0.5 font-serif tracking-[0.06em]"
-            style={{ fontSize: 10, color: F.mute }}
+            style={{ fontSize: 12, color: F.mute }}
           >
             {paper.authors[0] ?? '—'} · {relativeAge(paper.published_at)}
           </div>
           <div
             className="mt-1 font-mono tracking-[0.15em]"
-            style={{ fontSize: 11, color: F.gilt }}
+            style={{ fontSize: 13, color: F.gilt }}
           >
             {'★'.repeat(stars)}
             {'·'.repeat(5 - stars)} {paper.pulse_score.toFixed(1)}
@@ -191,7 +191,7 @@ export function TarotCard({
       {positionLabel && (
         <div
           className="absolute -top-[18px] left-1/2 -translate-x-1/2 whitespace-nowrap font-serif italic tracking-[0.1em]"
-          style={{ fontSize: 12, color: F.pageMute }}
+          style={{ fontSize: 14, color: F.pageMute }}
         >
           {positionLabel}
         </div>

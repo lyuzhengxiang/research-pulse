@@ -46,7 +46,7 @@ export async function Masthead() {
         </h1>
       </Link>
 
-      <div className="mt-1 font-serif italic text-[14px] text-ink">
+      <div className="mt-1 font-serif italic text-[16px] text-ink">
         « Live AI/ML papers, ranked by momentum » &nbsp;·&nbsp;
         <Link href="/today" className="almanac-link italic" style={{ color: '#a07a2c' }}>
           ✦ Daily Digest ↗

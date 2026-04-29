@@ -20,7 +20,7 @@ export function SignOutButton() {
       }
       disabled={pending}
       className="text-ink-mute transition hover:text-almanac-red disabled:opacity-50"
-      style={{ fontSize: 11 }}
+      style={{ fontSize: 13 }}
     >
       sign out ↗
     </button>
