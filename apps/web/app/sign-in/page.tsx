@@ -10,7 +10,7 @@ export default async function SignInPage() {
   if (user) redirect('/');
 
   return (
-    <div className="mx-auto max-w-[480px] px-9 pb-9 pt-9">
+    <div className="mx-auto max-w-[480px] px-4 pb-9 pt-9 lg:px-9">
       <header className="border-b-[3px] border-double border-ink-rule pb-3 text-center">
         <div className="font-mono text-ticker uppercase tracking-kicker text-almanac-red">
           Sign In

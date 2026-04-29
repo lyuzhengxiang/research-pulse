@@ -20,7 +20,7 @@ export default async function SettingsPage() {
   const suggestedKeywords = (trending ?? []).map((r) => r.word as string);
 
   return (
-    <div className="mx-auto max-w-[920px] px-[60px] pb-8 pt-5">
+    <div className="mx-auto max-w-[920px] px-4 pb-8 pt-5 lg:px-[60px]">
       <header className="border-b-[3px] border-double border-ink-rule pb-2.5 text-center">
         <div className="font-mono text-ticker uppercase tracking-kicker text-almanac-red">
           Subscriptions

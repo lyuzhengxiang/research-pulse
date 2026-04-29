@@ -52,6 +52,22 @@ html, body {
   margin-top: 4px;
 }
 
+/* Mobile: shrink the dropcap so it doesn't dwarf paragraphs.
+   Also used by .drop-cap-inline (an inline span used in the AlmanacBroadsheet
+   lead) so the lead's first letter stays proportional on phones. */
+.drop-cap-inline { font-size: 56px; }
+@media (max-width: 640px) {
+  .drop-cap::first-letter { font-size: 44px; }
+  .drop-cap-inline { font-size: 40px; }
+}
+
+/* Two-column abstract on the paper detail page. Single column on phones —
+   narrow viewports make justified columns unreadable. */
+.abstract-cols { column-count: 1; column-gap: 24px; }
+@media (min-width: 1024px) {
+  .abstract-cols { column-count: 2; }
+}
+
 .drop-cap-sm::first-letter {
   font-family: var(--font-serif), 'Cormorant Garamond', Georgia, serif;
   font-size: 56px;

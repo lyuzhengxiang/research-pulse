@@ -33,7 +33,7 @@ export default async function TodayPage() {
   }
 
   return (
-    <div className="px-9 pb-9 pt-6">
+    <div className="px-4 pb-9 pt-6 lg:px-9">
       <header className="mx-auto max-w-[780px] border-b-[3px] border-double border-ink-rule pb-3 text-center">
         <div className="font-mono text-ticker uppercase tracking-masthead-meta text-almanac-red">
           ★ ★ ★ &nbsp; {reading.dateLabel} · DRAWN AT {reading.drawnAt} &nbsp; ★ ★ ★
@@ -46,7 +46,7 @@ export default async function TodayPage() {
         </div>
       </header>
 
-      <div className="flex justify-center gap-10 pb-5 pt-12">
+      <div className="flex flex-wrap justify-center gap-4 pb-5 pt-8 lg:flex-nowrap lg:gap-10 lg:pt-12">
         <div>
           <TarotCard
             paper={reading.past.paper}
@@ -79,7 +79,7 @@ export default async function TodayPage() {
       </div>
 
       <div
-        className="mx-auto max-w-[760px] border-y border-ink-rule px-9 py-4.5 text-center"
+        className="mx-auto max-w-[760px] border-y border-ink-rule px-4 py-4.5 text-center lg:px-9"
         style={{ background: '#e9e2d2' }}
       >
         <div className="font-mono text-ticker uppercase tracking-kicker text-almanac-red">

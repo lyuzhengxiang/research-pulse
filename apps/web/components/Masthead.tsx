@@ -28,27 +28,33 @@ export async function Masthead() {
   const issue = dayOfYear(now);
 
   return (
-    <header className="relative border-b-[3px] border-double border-ink-rule bg-paper px-10 pt-[18px] pb-2 text-center">
-      <div className="absolute left-10 top-6 font-mono text-ticker uppercase tracking-mono-uc text-ink">
+    <header className="relative border-b-[3px] border-double border-ink-rule bg-paper px-4 pt-[14px] pb-2 text-center lg:px-10 lg:pt-[18px]">
+      {/* Corner labels — desktop only (no room on phones) */}
+      <div className="absolute left-10 top-6 hidden font-mono text-ticker uppercase tracking-mono-uc text-ink lg:block">
         EST. 2026 · DAILY
       </div>
-      <div className="absolute right-10 top-6 font-mono text-ticker uppercase tracking-mono-uc text-ink">
+      <div className="absolute right-10 top-6 hidden font-mono text-ticker uppercase tracking-mono-uc text-ink lg:block">
         WORKER · LIVE · {utcHour}:{utcMin} UTC
       </div>
 
-      <div className="font-mono text-ticker uppercase tracking-masthead-meta text-ink">
+      <div className="font-mono text-ticker uppercase tracking-mono-uc text-ink lg:tracking-masthead-meta">
         Vol. {volume} · No. {issue} · {today} · FREE
       </div>
 
       <Link href="/" className="block almanac-link">
-        <h1 className="mt-1 font-serif text-title-xl font-bold leading-none tracking-mast text-ink">
+        <h1 className="mt-1 font-serif text-[36px] font-bold leading-none tracking-mast text-ink sm:text-[44px] lg:text-title-xl">
           Research Pulse
         </h1>
       </Link>
 
-      <div className="mt-1 font-serif italic text-[16px] text-ink">
-        « Live AI/ML papers, ranked by momentum » &nbsp;·&nbsp;
-        <Link href="/today" className="almanac-link italic" style={{ color: '#a07a2c' }}>
+      <div className="mt-1 font-serif italic text-[14px] text-ink lg:text-[16px]">
+        « Live AI/ML papers, ranked by momentum »
+        <span className="hidden lg:inline"> &nbsp;·&nbsp; </span>
+        <Link
+          href="/today"
+          className="almanac-link italic block lg:inline"
+          style={{ color: '#a07a2c' }}
+        >
           ✦ Daily Digest ↗
         </Link>
       </div>

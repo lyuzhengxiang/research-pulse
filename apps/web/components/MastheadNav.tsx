@@ -28,7 +28,7 @@ export function MastheadNav({
   const todayActive = pathname === '/today';
 
   return (
-    <nav className="mt-2.5 flex items-center justify-center gap-7 border-t border-ink-rule pt-2 pb-1 font-mono text-ticker uppercase tracking-kicker">
+    <nav className="mt-2.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 border-t border-ink-rule pt-2 pb-1 font-mono text-ticker uppercase tracking-kicker lg:gap-7">
       {NAV.map(({ href, label }) => {
         const active = isActive(href);
         return (
@@ -45,10 +45,12 @@ export function MastheadNav({
           </Link>
         );
       })}
-      <span className="text-ink-mute">│</span>
+      {/* Daily Digest is also linked from the masthead tagline above; on
+          phones we drop it here to keep the nav line short. */}
+      <span className="hidden text-ink-mute lg:inline">│</span>
       <Link
         href="/today"
-        className={`pb-0.5 font-serif italic ${
+        className={`hidden pb-0.5 font-serif italic lg:inline-block ${
           todayActive
             ? 'border-b-2 border-almanac-red text-almanac-red'
             : 'text-almanac-gold hover:text-almanac-red'
@@ -60,14 +62,14 @@ export function MastheadNav({
 
       {signedIn && userId && (
         <>
-          <span className="text-ink-mute">│</span>
+          <span className="hidden text-ink-mute lg:inline">│</span>
           <AlertBell userId={userId} />
           <SignOutButton />
         </>
       )}
       {!signedIn && (
         <>
-          <span className="text-ink-mute">│</span>
+          <span className="hidden text-ink-mute lg:inline">│</span>
           <Link
             href="/sign-in"
             className="text-ink hover:text-almanac-red"

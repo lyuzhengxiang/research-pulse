@@ -58,7 +58,7 @@ export default async function PaperPage({
   const figureUrl = paper.figure_url ?? (await ensurePaperFigure(paper.arxiv_id));
 
   return (
-    <article className="mx-auto max-w-[1100px] px-[60px] pb-9 pt-5">
+    <article className="mx-auto max-w-[1100px] px-4 pb-9 pt-5 lg:px-[60px]">
       <div className="mb-3.5">
         <Link
           href="/"
@@ -78,7 +78,7 @@ export default async function PaperPage({
         <div className="font-mono text-ticker uppercase tracking-kicker text-ink-mute">
           {paper.primary_category} · arxiv:{paper.arxiv_id} · published {relativeAge(paper.published_at)} ago
         </div>
-        <h1 className="my-1.5 font-serif text-title-xl font-bold tracking-mast leading-[1.02]">
+        <h1 className="my-1.5 font-serif text-[30px] font-bold tracking-mast leading-[1.05] sm:text-[40px] lg:text-title-xl lg:leading-[1.02]">
           {paper.title}
         </h1>
         <div className="font-serif italic text-[16px]">
@@ -105,15 +105,15 @@ export default async function PaperPage({
       />
 
 
-      <div className="mt-5 grid grid-cols-[2fr_1fr] gap-8">
-        <div className="almanac-prose drop-cap" style={{ columnCount: 2, columnGap: 24 }}>
+      <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr] lg:gap-8">
+        <div className="almanac-prose drop-cap order-2 lg:order-1 abstract-cols">
           <p>{firstPara}</p>
           {restParas.map((p, i) => (
             <p key={i}>{p}</p>
           ))}
         </div>
-        <aside className="space-y-4.5">
-          <div>
+        <aside className="space-y-4.5 order-1 lg:order-2">
+          <div className="flex flex-col items-center lg:items-stretch">
             <PaperLeadFigure
               arxivId={paper.arxiv_id}
               url={figureUrl}

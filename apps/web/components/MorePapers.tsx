@@ -69,11 +69,11 @@ export function MorePapers({
   if (papers.length === 0 && done) return null;
 
   return (
-    <div className="px-10 pt-4 pb-8">
+    <div className="px-4 pt-4 pb-8 lg:px-10">
       <div className="mb-3.5 text-center font-mono text-ticker uppercase tracking-kicker text-almanac-red">
         — More Papers —
       </div>
-      <div className="grid grid-cols-2 gap-x-9">
+      <div className="grid grid-cols-1 gap-x-9 lg:grid-cols-2">
         {papers.map((p, i) => (
           <Link
             key={p.arxiv_id}

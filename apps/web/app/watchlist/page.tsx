@@ -74,7 +74,7 @@ export default async function WatchlistPage() {
       : `${unreadCount} new notifications`;
 
   return (
-    <div className="mx-auto max-w-[1080px] px-10 pb-8 pt-5">
+    <div className="mx-auto max-w-[1080px] px-4 pb-8 pt-5 lg:px-10">
       <header className="border-b border-ink-rule pb-2.5 text-center">
         <div className="font-mono text-ticker uppercase tracking-kicker text-ink-mute">
           Signed in as
@@ -90,7 +90,7 @@ export default async function WatchlistPage() {
         </div>
       </header>
 
-      <div className="mt-5 grid grid-cols-[1.2fr_1fr] gap-9">
+      <div className="mt-5 grid grid-cols-1 gap-7 lg:grid-cols-[1.2fr_1fr] lg:gap-9">
         <section>
           <div className="border-b border-ink-rule pb-1 font-mono text-ticker uppercase tracking-kicker">
             ★ Your Starred Papers

@@ -65,16 +65,16 @@ export async function AlmanacBroadsheet({
 
   return (
     <div>
-      <div className="border-b border-ink-rule px-10 py-2 text-center">
+      <div className="border-b border-ink-rule px-4 py-2 text-center lg:px-10">
         <div className="font-mono text-ticker uppercase tracking-kicker text-ink-mute">
           {kicker}
         </div>
         <div className="font-serif italic text-[15px] text-ink-mute">{strapline}</div>
       </div>
 
-      <div className="grid grid-cols-[2fr_3fr_2fr] gap-7 border-b border-ink-rule px-10 py-5">
-        {/* LEFT — INDEX */}
-        <aside aria-label="Index">
+      <div className="grid grid-cols-1 gap-5 border-b border-ink-rule px-4 py-5 lg:grid-cols-[2fr_3fr_2fr] lg:gap-7 lg:px-10">
+        {/* LEFT — INDEX (desktop only; mobile shows just Top Paper + More Papers) */}
+        <aside aria-label="Index" className="hidden lg:block order-2 lg:order-1">
           <div className="border-b border-ink-rule pb-1 font-mono text-ticker uppercase tracking-kicker">
             Index
           </div>
@@ -99,7 +99,7 @@ export async function AlmanacBroadsheet({
         </aside>
 
         {/* CENTER — LEAD */}
-        <article aria-label="Lead">
+        <article aria-label="Lead" className="order-1 lg:order-2">
           <div className="font-mono text-ticker uppercase tracking-kicker text-almanac-red">
             ★ Top Paper ★
           </div>
@@ -107,7 +107,7 @@ export async function AlmanacBroadsheet({
             href={`/paper/${encodeURIComponent(lead.arxiv_id)}`}
             className="almanac-link block"
           >
-            <h2 className="my-1.5 font-serif text-lead-title font-bold tracking-lead">
+            <h2 className="my-1.5 font-serif text-[28px] font-bold tracking-lead leading-[1.1] sm:text-[36px] lg:text-lead-title lg:leading-[1.05]">
               {lead.title}
             </h2>
           </Link>
@@ -115,15 +115,16 @@ export async function AlmanacBroadsheet({
             by {lead.authors.slice(0, 3).join(', ')}
             {lead.authors.length > 3 && `, et al`} · published {relativeAge(lead.published_at)} ago
           </p>
-          <div className="mt-3 flex items-start gap-3.5">
-            <PaperLeadFigure arxivId={lead.arxiv_id} url={leadFigureUrl} size={150} />
+          <div className="mt-3 flex flex-col items-stretch gap-3 sm:flex-row sm:items-start sm:gap-3.5">
+            <div className="self-center sm:self-auto">
+              <PaperLeadFigure arxivId={lead.arxiv_id} url={leadFigureUrl} size={150} />
+            </div>
             <p className="m-0 font-serif text-body">
               {leadDrop.first ? (
                 <>
                   <span
-                    className="font-serif font-bold"
+                    className="font-serif font-bold drop-cap-inline"
                     style={{
-                      fontSize: 56,
                       float: 'left',
                       lineHeight: 0.85,
                       marginRight: 6,
@@ -159,8 +160,10 @@ export async function AlmanacBroadsheet({
           </div>
         </article>
 
-        {/* RIGHT — TELEGRAMS */}
-        <Telegrams initial={initialTelegrams} userId={userId} />
+        {/* RIGHT — TELEGRAMS (desktop only) */}
+        <div className="hidden lg:block order-3">
+          <Telegrams initial={initialTelegrams} userId={userId} />
+        </div>
       </div>
 
       <MorePapers initial={list} scope={scope} initialOffset={papers.length} />
