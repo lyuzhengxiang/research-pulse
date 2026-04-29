@@ -23,8 +23,8 @@ export async function Colophon() {
       <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-2">
         <ColophonClock />
         <span>
-          {(papers ?? 0).toLocaleString()} papers in circulation ·{' '}
-          {(active ?? 0).toLocaleString()} active · {(writes ?? 0).toLocaleString()} writes/h
+          {(papers ?? 0).toLocaleString()} papers tracked ·{' '}
+          {(active ?? 0).toLocaleString()} live · {(writes ?? 0).toLocaleString()} updates/h
         </span>
         <span>signed in as {handle}</span>
       </div>

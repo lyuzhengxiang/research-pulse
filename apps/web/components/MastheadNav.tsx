@@ -6,10 +6,10 @@ import { AlertBell } from './AlertBell';
 import { SignOutButton } from './SignOutButton';
 
 const NAV: Array<{ href: string; label: string }> = [
-  { href: '/', label: 'Front Page' },
-  { href: '/trending', label: 'In Circulation' },
-  { href: '/watchlist', label: 'Subscriber Ledger' },
-  { href: '/settings', label: 'Standing Orders' },
+  { href: '/', label: 'Feed' },
+  { href: '/trending', label: 'Trending' },
+  { href: '/watchlist', label: 'Starred' },
+  { href: '/settings', label: 'Settings' },
 ];
 
 export function MastheadNav({
@@ -55,7 +55,7 @@ export function MastheadNav({
         }`}
         style={{ fontSize: 13, letterSpacing: '0.1em', textTransform: 'none' }}
       >
-        ✦ Today&apos;s Reading
+        ✦ Daily Digest
       </Link>
 
       {signedIn && userId && (

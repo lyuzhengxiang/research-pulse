@@ -25,8 +25,8 @@ function alertCopy(a: UserAlert): string {
     const ratio = payload.ratio;
     return `+${gained} ★ in 1h${ratio ? `, ${ratio}× baseline velocity` : ''}`;
   }
-  if (a.alert_type === 'new_hn_discussion') return 'A discussion has appeared on Hacker News';
-  if (a.alert_type === 'new_match') return 'A new arrival matches your standing orders';
+  if (a.alert_type === 'new_hn_discussion') return 'New discussion on Hacker News';
+  if (a.alert_type === 'new_match') return 'New paper matches your subscriptions';
   return a.alert_type;
 }
 
@@ -97,7 +97,7 @@ export function Dispatches({
   if (alerts.length === 0) {
     return (
       <div className="font-serif italic text-[14px] text-ink-mute">
-        — the post is empty —
+        — no notifications yet —
       </div>
     );
   }
@@ -109,7 +109,7 @@ export function Dispatches({
           onClick={acknowledgeAll}
           className="font-mono text-ticker uppercase tracking-mono-uc text-ink-mute hover:text-almanac-red"
         >
-          acknowledge all ↗
+          mark all read ↗
         </button>
       </div>
       <ol className="m-0 list-none p-0">
@@ -141,7 +141,7 @@ export function Dispatches({
                   className="hover:text-ink"
                   disabled={!unread}
                 >
-                  [ {unread ? 'acknowledge' : 'acknowledged'} ]
+                  [ {unread ? 'mark read' : 'read'} ]
                 </button>
                 <span className="mx-2">·</span>
                 <button onClick={() => dismiss(a.id)} className="hover:text-almanac-red">
@@ -153,7 +153,7 @@ export function Dispatches({
         })}
       </ol>
       <div className="mt-3 text-center font-serif italic text-[13px] text-ink-mute">
-        — end of dispatches —
+        — end of notifications —
       </div>
     </div>
   );

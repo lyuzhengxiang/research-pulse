@@ -2,6 +2,8 @@ import Link from 'next/link';
 import type { Paper } from '@research-pulse/shared';
 import { Telegrams, type Telegram } from './Telegrams';
 import { PaperLeadFigure } from './PaperLeadFigure';
+import { MorePapers } from './MorePapers';
+import type { FeedScope } from '@/lib/papers';
 
 function dropCap(s: string): { first: string; rest: string } {
   if (!s) return { first: '', rest: '' };
@@ -25,6 +27,7 @@ export function AlmanacBroadsheet({
   papers,
   initialTelegrams,
   userId,
+  scope,
 }: {
   kicker: string;
   title: string;
@@ -32,6 +35,7 @@ export function AlmanacBroadsheet({
   papers: Paper[];
   initialTelegrams: Telegram[];
   userId: string | null;
+  scope: FeedScope;
 }) {
   if (papers.length === 0) {
     return (
@@ -41,7 +45,7 @@ export function AlmanacBroadsheet({
         </div>
         <h2 className="mt-2 font-serif text-page-title font-bold tracking-lead">{title}</h2>
         <p className="mt-3 font-serif italic text-[14px] text-ink-mute">
-          The wires are quiet this morning. Return at the next polling.
+          No papers yet. Check back after the next poll.
         </p>
       </div>
     );
@@ -82,7 +86,7 @@ export function AlmanacBroadsheet({
                 {p.title}
               </div>
               <div className="mt-1 font-mono text-meta text-ink-mute">
-                p. <span className="text-ink">{i + 2}</span> · pulse{' '}
+                #<span className="text-ink">{i + 2}</span> · pulse{' '}
                 <span className="tabnum text-ink">{p.pulse_score.toFixed(1)}</span>
               </div>
             </Link>
@@ -92,7 +96,7 @@ export function AlmanacBroadsheet({
         {/* CENTER — LEAD */}
         <article aria-label="Lead">
           <div className="font-mono text-ticker uppercase tracking-kicker text-almanac-red">
-            ★ Front-Page Bulletin ★
+            ★ Top Paper ★
           </div>
           <Link
             href={`/paper/${encodeURIComponent(lead.arxiv_id)}`}
@@ -104,7 +108,7 @@ export function AlmanacBroadsheet({
           </Link>
           <p className="font-serif italic text-[13px] text-[#3a342b]">
             by {lead.authors.slice(0, 3).join(', ')}
-            {lead.authors.length > 3 && `, et al`}, dispatched from arXiv {relativeAge(lead.published_at)} past.
+            {lead.authors.length > 3 && `, et al`} · published {relativeAge(lead.published_at)} ago
           </p>
           <div className="mt-3 flex items-start gap-3.5">
             <PaperLeadFigure arxivId={lead.arxiv_id} caption="FIG. 1 · arch. diagram" />
@@ -145,7 +149,7 @@ export function AlmanacBroadsheet({
               className="almanac-link ml-auto"
               style={{ color: '#214a8a' }}
             >
-              cont&apos;d on p. 4 ↗
+              read more ↗
             </Link>
           </div>
         </article>
@@ -154,39 +158,7 @@ export function AlmanacBroadsheet({
         <Telegrams initial={initialTelegrams} userId={userId} />
       </div>
 
-      {/* ALSO IN CIRCULATION */}
-      {list.length > 0 && (
-        <div className="px-10 pt-4 pb-8">
-          <div className="mb-3.5 text-center font-mono text-ticker uppercase tracking-kicker text-almanac-red">
-            — Also In Circulation —
-          </div>
-          <div className="grid grid-cols-2 gap-x-9">
-            {list.map((p) => (
-              <Link
-                key={p.arxiv_id}
-                href={`/paper/${encodeURIComponent(p.arxiv_id)}`}
-                className="almanac-link block"
-              >
-                <div className="grid grid-cols-[32px_1fr_auto] gap-2 border-b border-dotted border-ink-rule py-2.5">
-                  <div className="font-serif text-[24px] font-bold leading-none text-almanac-red">§</div>
-                  <div>
-                    <div className="font-serif text-list font-semibold leading-snug">{p.title}</div>
-                    <div className="mt-0.5 font-mono text-ticker text-ink-mute">
-                      {p.primary_category} · {p.authors[0] ?? '—'} et al · {relativeAge(p.published_at)}
-                    </div>
-                  </div>
-                  <div className="text-right font-mono text-meta">
-                    <div className="tabnum font-bold text-almanac-red">
-                      {p.pulse_score.toFixed(1)}
-                    </div>
-                    <div className="tabnum text-ink-mute">{p.is_active ? 'active' : 'sealed'}</div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+      <MorePapers initial={list} scope={scope} initialOffset={papers.length} />
     </div>
   );
 }

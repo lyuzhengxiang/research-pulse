@@ -24,7 +24,7 @@ export function StarButton({
         onClick={() => router.push('/sign-in')}
         className="font-mono text-meta tracking-mono-uc text-ink-mute uppercase hover:text-almanac-red"
       >
-        sign in to add to ledger
+        sign in to star
       </button>
     );
   }
@@ -53,7 +53,7 @@ export function StarButton({
       className="font-mono text-meta uppercase tracking-mono-uc font-bold transition disabled:opacity-50"
       style={{ color: starred ? '#16110b' : '#b1342a' }}
     >
-      {starred ? '✓ in your ledger' : '★ add to ledger'}
+      {starred ? '✓ starred' : '★ star this paper'}
     </button>
   );
 }

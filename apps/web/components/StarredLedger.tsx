@@ -55,8 +55,19 @@ export function StarredLedger({
 
   if (papers.length === 0) {
     return (
-      <div className="border-b border-dotted border-ink-rule py-3 font-serif italic text-[14px] text-ink-mute">
-        Nothing under your seal yet. Open a dispatch and apply your stamp.
+      <div className="border-b border-dotted border-ink-rule py-4 font-serif text-[14px] text-ink-mute">
+        <div className="italic">No starred papers yet.</div>
+        <div className="mt-1.5 not-italic">
+          Browse{' '}
+          <Link href="/trending" className="font-semibold text-almanac-red hover:underline">
+            Trending
+          </Link>
+          {' '}or the{' '}
+          <Link href="/" className="font-semibold text-almanac-red hover:underline">
+            Feed
+          </Link>
+          {' '}and click the ★ on any paper to save it here.
+        </div>
       </div>
     );
   }
@@ -123,7 +134,7 @@ function LedgerEntry({
       >
         <div className="flex items-baseline justify-between">
           <div className="font-mono uppercase tracking-mono-uc text-ink-mute" style={{ fontSize: 10 }}>
-            Entry №{String(index + 1).padStart(2, '0')} · {paper.primary_category} · {paper.arxiv_id}
+            #{String(index + 1).padStart(2, '0')} · {paper.primary_category} · {paper.arxiv_id}
           </div>
           <div className="tabnum font-serif text-list font-bold text-almanac-red">
             {pulse.toFixed(1)}
@@ -133,7 +144,7 @@ function LedgerEntry({
           {paper.title}
         </div>
         <div className="mt-0.5 font-serif italic text-meta text-ink-mute">
-          {paper.authors[0] ?? '—'} et al — sealed {relativeAge(paper.published_at)} ago
+          {paper.authors[0] ?? '—'} et al — published {relativeAge(paper.published_at)} ago
         </div>
         <div className="mt-1.5 flex items-center gap-3.5 font-mono text-meta">
           <span>

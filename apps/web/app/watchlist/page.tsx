@@ -66,41 +66,41 @@ export default async function WatchlistPage() {
 
   const handle = user.email?.split('@')[0] ?? 'reader';
   const unreadCount = alerts.filter((a) => !a.read_at).length;
-  const dispatchSentence =
+  const notifSentence =
     unreadCount === 0
-      ? 'no new dispatches'
+      ? 'no new notifications'
       : unreadCount === 1
-      ? '1 new dispatch'
-      : `${unreadCount} new dispatches`;
+      ? '1 new notification'
+      : `${unreadCount} new notifications`;
 
   return (
     <div className="mx-auto max-w-[1080px] px-10 pb-8 pt-5">
       <header className="border-b border-ink-rule pb-2.5 text-center">
         <div className="font-mono text-ticker uppercase tracking-kicker text-ink-mute">
-          For The Attention Of
+          Signed in as
         </div>
         <div className="mt-0.5 font-serif text-subscriber font-bold tracking-lead">
-          Subscriber №&nbsp;{handle}
+          {handle}
         </div>
         <div className="mt-0.5 font-serif italic text-[14px]">
           {papers.length === 0
-            ? 'no papers under your seal yet'
-            : `${papers.length} paper${papers.length === 1 ? '' : 's'} under your seal`}{' '}
-          · {dispatchSentence}
+            ? 'no starred papers yet'
+            : `${papers.length} starred paper${papers.length === 1 ? '' : 's'}`}{' '}
+          · {notifSentence}
         </div>
       </header>
 
       <div className="mt-5 grid grid-cols-[1.2fr_1fr] gap-9">
         <section>
           <div className="border-b border-ink-rule pb-1 font-mono text-ticker uppercase tracking-kicker">
-            ★ Starred Ledger
+            ★ Your Starred Papers
           </div>
           <StarredLedger papers={papers} metricsByArxiv={metricsByArxiv} />
         </section>
 
         <aside>
           <div className="border-b border-ink-rule pb-1 font-mono text-ticker uppercase tracking-kicker text-almanac-red">
-            ✉ Dispatches
+            ✉ Notifications
           </div>
           <div className="mt-2">
             <Dispatches initial={alerts} userId={user.id} paperTitles={titlesById} />

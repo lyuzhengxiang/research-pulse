@@ -9,34 +9,26 @@ import type { SubscriptionType, UserSubscription } from '@research-pulse/shared'
 const ARTICLE_LABELS: Record<SubscriptionType, { roman: string; title: string; descriptor: string; color: 'red' | 'blue' | 'brown' }> = {
   keyword: {
     roman: 'I',
-    title: 'Keywords of Interest',
+    title: 'Keywords',
     descriptor:
-      'The Editor shall include any paper whose abstract or title contains the following terms.',
+      'Show papers whose title or abstract contains any of these words.',
     color: 'red',
   },
   author: {
     roman: 'II',
-    title: 'Authors to Follow',
+    title: 'Authors',
     descriptor:
-      'The Editor shall give standing place to any paper authored by the following correspondents.',
+      'Show every new paper by these authors.',
     color: 'blue',
   },
   category: {
     roman: 'III',
-    title: 'Categories to Circulate',
+    title: 'arXiv Categories',
     descriptor:
-      'The arXiv categories from which the morning post shall draw. Click to enable.',
+      'Pull new papers from these arXiv categories. Click to toggle.',
     color: 'brown',
   },
 };
-
-const DISPATCH_OPTIONS: Array<{ key: string; label: string; defaultOn: boolean }> = [
-  { key: 'star_surge', label: 'On surge in the GitHub readership', defaultOn: true },
-  { key: 'hn_front', label: 'On reaching the Hacker News front page', defaultOn: true },
-  { key: 'new_match', label: 'On every new arrival matching keywords', defaultOn: false },
-  { key: 'morning_post', label: 'Daily morning post at 09:00 UTC', defaultOn: true },
-  { key: 'todays_reading', label: 'Today’s Reading delivered each dawn', defaultOn: true },
-];
 
 export function SubscriptionManager({
   userId,
@@ -127,7 +119,7 @@ export function SubscriptionManager({
         {suggestedKeywords.length > 0 && (
           <div className="mt-3.5">
             <div className="mb-1.5 font-mono text-ticker uppercase tracking-mono-uc text-ink-mute">
-              by way of suggestion
+              suggested
             </div>
             <div className="flex flex-wrap gap-1.5">
               {suggestedKeywords
@@ -170,7 +162,7 @@ export function SubscriptionManager({
                 setDraftAuthor('');
               }
             }}
-            placeholder="add correspondent, then ↵"
+            placeholder="add author, then ↵"
             className="border-b border-dotted border-ink-rule bg-transparent font-serif italic text-[14px] outline-none placeholder:text-ink-mute"
             style={{ width: 220, padding: '2px 0' }}
           />
@@ -202,33 +194,9 @@ export function SubscriptionManager({
         </div>
       </Article>
 
-      <Article type="dispatches">
-        <p className="m-0 mb-2.5 font-serif italic text-[13px] text-[#3a342b]">
-          The classes of dispatch the Editor shall presume to forward to your address.
-        </p>
-        {DISPATCH_OPTIONS.map((d) => (
-          <div
-            key={d.key}
-            className="flex items-center justify-between border-b border-dotted py-1.5"
-            style={{ borderColor: '#bdb29b' }}
-          >
-            <span className="font-serif text-[15px]">{d.label}</span>
-            <span
-              className="font-mono text-meta font-bold"
-              style={{ color: d.defaultOn ? '#b1342a' : '#6b6055' }}
-            >
-              {d.defaultOn ? '☑ STAMPED' : '☐ withheld'}
-            </span>
-          </div>
-        ))}
-        <p className="mt-2.5 font-serif italic text-meta text-ink-mute">
-          Dispatch preferences are presently fixed by the editor; changes will be admitted in a future issue.
-        </p>
-      </Article>
-
       <div className="mt-6 flex items-center justify-between border-t-[3px] border-double border-ink-rule pt-3.5">
         <div className="font-serif italic text-[13px] text-ink-mute">
-          Signed,&nbsp;
+          Signed in as&nbsp;
           <span className="font-serif font-semibold not-italic text-ink">
             {email.split('@')[0]}
           </span>
@@ -237,19 +205,11 @@ export function SubscriptionManager({
         <div className="flex items-center gap-3">
           {savedAt && (
             <span className="font-mono text-ticker text-ink-mute">
-              {isPending ? 'lodging…' : 'lodged ✓'}
+              {isPending ? 'saving…' : 'saved ✓'}
             </span>
           )}
-          <span
-            className="font-mono text-meta uppercase tracking-[0.2em]"
-            style={{
-              background: '#1f1a14',
-              color: '#f1ece1',
-              padding: '8px 22px',
-              borderRadius: 0,
-            }}
-          >
-            Lodge With Editor ▶
+          <span className="font-mono text-meta uppercase tracking-[0.2em] text-ink-mute">
+            changes save automatically
           </span>
         </div>
       </div>
@@ -263,13 +223,10 @@ function Article({
   type,
   children,
 }: {
-  type: 'keyword' | 'author' | 'category' | 'dispatches';
+  type: 'keyword' | 'author' | 'category';
   children: React.ReactNode;
 }) {
-  const meta =
-    type === 'dispatches'
-      ? { roman: 'IV', title: 'Dispatches' }
-      : ARTICLE_LABELS[type];
+  const meta = ARTICLE_LABELS[type];
   const tinted = ALT_BG[type] ?? false;
   return (
     <section

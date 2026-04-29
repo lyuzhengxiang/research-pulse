@@ -39,12 +39,12 @@ export function AlertBell({ userId }: { userId: string }) {
   return (
     <Link
       href="/watchlist"
-      aria-label={`Dispatches: ${unread} unread`}
+      aria-label={`Notifications: ${unread} unread`}
       className="text-ink hover:text-almanac-red"
       style={{ fontSize: 11 }}
     >
       <span style={{ color: unread > 0 ? '#b1342a' : '#6b6055' }}>✉</span>{' '}
-      <span>{unread > 0 ? `${unread > 9 ? '9+' : unread} new` : 'no post'}</span>
+      <span>{unread > 0 ? `${unread > 9 ? '9+' : unread} new` : 'no new'}</span>
     </Link>
   );
 }

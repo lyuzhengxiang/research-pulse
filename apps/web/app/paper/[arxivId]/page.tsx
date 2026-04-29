@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { LivePulseCard } from '@/components/LivePulseCard';
 import { StarButton } from '@/components/StarButton';
 import { PaperLeadFigure } from '@/components/PaperLeadFigure';
+import { GenerateSummaryButton } from '@/components/GenerateSummaryButton';
 import type { Paper, PaperLink } from '@research-pulse/shared';
 
 export const dynamic = 'force-dynamic';
@@ -62,24 +63,24 @@ export default async function PaperPage({
           className="font-mono text-meta tracking-[0.1em] hover:text-almanac-red"
           style={{ color: '#214a8a' }}
         >
-          ◀ back to the front page
+          ◀ back to feed
         </Link>
       </div>
 
       <div className="mb-2 text-center font-mono text-ticker uppercase tracking-kicker text-almanac-red">
-        ★ ★ ★ &nbsp;Special Dispatch&nbsp; ★ ★ ★
+        ★ ★ ★ &nbsp;Paper&nbsp; ★ ★ ★
       </div>
 
       <header className="border-y-[3px] border-double border-ink-rule px-0 py-3 text-center">
         <div className="border-t border-ink-rule pt-3 -mt-3" />
         <div className="font-mono text-ticker uppercase tracking-kicker text-ink-mute">
-          {paper.primary_category} · arxiv:{paper.arxiv_id} · filed {relativeAge(paper.published_at)} ago
+          {paper.primary_category} · arxiv:{paper.arxiv_id} · published {relativeAge(paper.published_at)} ago
         </div>
         <h1 className="my-1.5 font-serif text-title-xl font-bold tracking-mast leading-[1.02]">
           {paper.title}
         </h1>
         <div className="font-serif italic text-[14px]">
-          A correspondence by {paper.authors.slice(0, 4).join(', ')}
+          By {paper.authors.slice(0, 4).join(', ')}
           {paper.authors.length > 4 && ` and ${paper.authors.length - 4} others`}
         </div>
       </header>
@@ -92,21 +93,15 @@ export default async function PaperPage({
             · repository ↗
           </ActionLink>
         )}
-        {hn && <ActionLink href={hn.url}>· HN colloquy ↗</ActionLink>}
+        {hn && <ActionLink href={hn.url}>· Hacker News ↗</ActionLink>}
       </div>
 
-      {paper.tldr && (
-        <div className="relative mt-5 border border-ink-rule bg-paper-2 px-5 py-4">
-          <div
-            className="absolute left-4 -top-2.5 bg-paper px-2 font-mono text-ticker uppercase tracking-kicker text-almanac-red"
-          >
-            The Gist · per gpt-5.4
-          </div>
-          <p className="m-0 font-serif italic text-pull-quote">
-            &ldquo;{paper.tldr}&rdquo;
-          </p>
-        </div>
-      )}
+      <GenerateSummaryButton
+        arxivId={paper.arxiv_id}
+        initialTldr={paper.tldr}
+        signedIn={!!user}
+      />
+
 
       <div className="mt-5 grid grid-cols-[2fr_1fr] gap-8">
         <div className="almanac-prose drop-cap" style={{ columnCount: 2, columnGap: 24 }}>

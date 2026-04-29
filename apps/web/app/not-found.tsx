@@ -4,13 +4,13 @@ export default function NotFound() {
   return (
     <div className="px-9 py-20 text-center">
       <div className="font-mono text-ticker uppercase tracking-kicker text-almanac-red">
-        Errata · Page Not Found
+        404 · Not Found
       </div>
       <h1 className="mt-2 font-serif text-page-title font-bold tracking-lead">
-        The Editor regrets.
+        Page not found.
       </h1>
       <p className="mx-auto mt-3 max-w-md font-serif italic text-[15px] text-ink-mute">
-        The page you sought is not in this issue. It may have been pulled at proof, filed under a different number, or never set in type.
+        We couldn&apos;t find what you were looking for. The link may be broken or the paper may have been removed.
       </p>
       <Link
         href="/"
@@ -22,7 +22,7 @@ export default function NotFound() {
           borderRadius: 0,
         }}
       >
-        Return to the Front Page ▶
+        Back to Feed ▶
       </Link>
     </div>
   );

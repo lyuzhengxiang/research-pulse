@@ -2,8 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { MastheadNav } from './MastheadNav';
 
-const VOLUME = 'IV';
-const ISSUE = '218';
+const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
 
 function formatHeader(date: Date) {
   const day = date.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' }).toUpperCase();
@@ -13,12 +12,20 @@ function formatHeader(date: Date) {
   return `${day} ${dom} ${mon} ${yr}`;
 }
 
+function dayOfYear(date: Date): number {
+  const start = Date.UTC(date.getUTCFullYear(), 0, 1);
+  return Math.floor((date.getTime() - start) / 86_400_000) + 1;
+}
+
 export async function Masthead() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const today = formatHeader(new Date());
-  const utcHour = String(new Date().getUTCHours()).padStart(2, '0');
-  const utcMin = String(new Date().getUTCMinutes()).padStart(2, '0');
+  const now = new Date();
+  const today = formatHeader(now);
+  const utcHour = String(now.getUTCHours()).padStart(2, '0');
+  const utcMin = String(now.getUTCMinutes()).padStart(2, '0');
+  const volume = ROMAN[(now.getUTCFullYear() - 2025) % ROMAN.length] || 'I';
+  const issue = dayOfYear(now);
 
   return (
     <header className="relative border-b-[3px] border-double border-ink-rule bg-paper px-10 pt-[18px] pb-2 text-center">
@@ -30,19 +37,19 @@ export async function Masthead() {
       </div>
 
       <div className="font-mono text-ticker uppercase tracking-masthead-meta text-ink">
-        Vol. {VOLUME} · No. {ISSUE} · {today} · TWO PENCE
+        Vol. {volume} · No. {issue} · {today} · FREE
       </div>
 
       <Link href="/" className="block almanac-link">
         <h1 className="mt-1 font-serif text-title-xl font-bold leading-none tracking-mast text-ink">
-          The Research Almanac
+          Research Pulse
         </h1>
       </Link>
 
       <div className="mt-1 font-serif italic text-[14px] text-ink">
-        « A daily ledger of papers in motion » &nbsp;·&nbsp;
+        « Live AI/ML papers, ranked by momentum » &nbsp;·&nbsp;
         <Link href="/today" className="almanac-link italic" style={{ color: '#a07a2c' }}>
-          ✦ Today&apos;s reading is ready — drawn at 09:00 ↗
+          ✦ Daily Digest ↗
         </Link>
       </div>
 

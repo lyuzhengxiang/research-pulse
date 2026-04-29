@@ -65,7 +65,7 @@ export function Telegrams({
             id: `filed:${p.arxiv_id}`,
             ts: fmtTime(p.created_at ?? new Date().toISOString()),
             kind: 'filed',
-            text: `filed · ${truncate(p.title, 48)}`,
+            text: `new · ${truncate(p.title, 48)}`,
             arxivId: p.arxiv_id,
           });
         },
@@ -80,7 +80,7 @@ export function Telegrams({
               id: `gh:${l.id}`,
               ts: fmtTime(l.discovered_at ?? new Date().toISOString()),
               kind: 'github_found',
-              text: `repository found · gh/${truncate(l.external_id, 28)}`,
+              text: `code found · gh/${truncate(l.external_id, 28)}`,
               arxivId: l.arxiv_id,
             });
           } else if (l.source === 'hn') {
@@ -88,7 +88,7 @@ export function Telegrams({
               id: `hn:${l.id}`,
               ts: fmtTime(l.discovered_at ?? new Date().toISOString()),
               kind: 'hn_found',
-              text: `surfaced on Hacker News`,
+              text: `posted on Hacker News`,
               arxivId: l.arxiv_id,
             });
           }
@@ -143,7 +143,7 @@ export function Telegrams({
   return (
     <aside aria-label="Telegrams">
       <div className="flex items-center justify-between border-b border-ink-rule pb-1 font-mono text-ticker uppercase tracking-kicker">
-        <span>Telegrams · Live</span>
+        <span>Live Activity</span>
         <span
           className="h-1.5 w-1.5 rounded-full transition"
           style={{
@@ -156,7 +156,7 @@ export function Telegrams({
       <ol className="mt-1">
         {items.length === 0 ? (
           <li className="py-3 text-meta italic text-ink-mute">
-            — wires quiet —
+            — quiet for now —
           </li>
         ) : (
           items.map((t) => {

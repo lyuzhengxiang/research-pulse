@@ -18,8 +18,8 @@ const serif = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: 'The Research Almanac',
-  description: 'A daily ledger of papers in motion — arXiv, GitHub, and Hacker News, set in print.',
+  title: 'Research Pulse',
+  description: 'Live AI/ML papers, ranked by momentum across arXiv, GitHub, and Hacker News.',
 };
 
 export default function RootLayout({

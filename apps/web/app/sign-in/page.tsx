@@ -13,13 +13,13 @@ export default async function SignInPage() {
     <div className="mx-auto max-w-[480px] px-9 pb-9 pt-9">
       <header className="border-b-[3px] border-double border-ink-rule pb-3 text-center">
         <div className="font-mono text-ticker uppercase tracking-kicker text-almanac-red">
-          Form 100-A · Subscriber Application
+          Sign In
         </div>
         <h1 className="mt-1 font-serif text-page-title font-bold tracking-lead">
-          Apply for Subscription
+          Welcome back
         </h1>
         <div className="mt-0.5 font-serif italic text-[14px]">
-          « We shall send a key to your address by the next post. »
+          « We&apos;ll email you a magic link to sign in. »
         </div>
       </header>
       <SignInForm />

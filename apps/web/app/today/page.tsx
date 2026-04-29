@@ -14,19 +14,19 @@ export default async function TodayPage() {
     return (
       <div className="mx-auto max-w-[780px] px-9 pb-9 pt-6 text-center">
         <div className="font-mono text-ticker uppercase tracking-kicker text-almanac-red">
-          ✦ Today&apos;s Reading
+          ✦ Daily Digest
         </div>
         <h1 className="mt-2 font-serif text-today-title font-bold tracking-tight-1">
-          The deck waits.
+          Nothing yet today.
         </h1>
         <p className="mt-3 font-serif italic text-[14px] text-ink-mute">
-          The wires are still gathering this morning. The cards will be drawn shortly after the next polling.
+          Today&apos;s digest will appear after the next poll.
         </p>
         <Link
           href="/"
           className="mt-5 inline-block font-serif italic text-[13px] text-almanac-red"
         >
-          ← return to the front page
+          ← back to feed
         </Link>
       </div>
     );
@@ -39,10 +39,10 @@ export default async function TodayPage() {
           ★ ★ ★ &nbsp; {reading.dateLabel} · DRAWN AT {reading.drawnAt} &nbsp; ★ ★ ★
         </div>
         <h1 className="mt-1.5 font-serif text-today-title font-bold tracking-tight-1">
-          Today&apos;s Reading
+          Daily Digest
         </h1>
         <div className="mt-1 font-serif italic text-[14px] text-ink-mute">
-          « A three-card spread, drawn each dawn from the day&apos;s arrivals. Returns tomorrow at first light. »
+          « Three picks from today&apos;s arXiv papers. Refreshed every morning. »
         </div>
       </header>
 
@@ -83,17 +83,17 @@ export default async function TodayPage() {
         style={{ background: '#e9e2d2' }}
       >
         <div className="font-mono text-ticker uppercase tracking-kicker text-almanac-red">
-          — The Reader Speaks —
+          — The Take —
         </div>
         <p className="mx-auto mt-2.5 mb-0 max-w-[700px] font-serif italic text-reader leading-[1.55]">
           {reading.interpretation}{' '}
-          <span className="font-semibold text-almanac-red">Pulse runs high; tend the watchlist.</span>
+          <span className="font-semibold text-almanac-red">Pulse is running hot — check your starred.</span>
         </p>
       </div>
 
       <section className="mt-7">
         <div className="text-center font-mono text-ticker uppercase tracking-kicker text-almanac-red">
-          — Minor Arcana · also drawn —
+          — Also worth a look —
         </div>
         <div className="mt-5 flex flex-wrap justify-center gap-4">
           {reading.minor.map(({ paper, roman }) => (
@@ -104,7 +104,7 @@ export default async function TodayPage() {
 
       <div className="mt-6 text-center font-serif italic text-[13px]">
         <Link href="/" className="text-almanac-red almanac-link">
-          ← return to the front page
+          ← back to feed
         </Link>
       </div>
     </div>

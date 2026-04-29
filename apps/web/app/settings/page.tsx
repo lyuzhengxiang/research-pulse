@@ -23,13 +23,13 @@ export default async function SettingsPage() {
     <div className="mx-auto max-w-[920px] px-[60px] pb-8 pt-5">
       <header className="border-b-[3px] border-double border-ink-rule pb-2.5 text-center">
         <div className="font-mono text-ticker uppercase tracking-kicker text-almanac-red">
-          Form 218-B · Subscriber Preferences
+          Subscriptions
         </div>
         <h1 className="mt-1 font-serif text-page-title font-bold tracking-lead">
-          Standing Orders
+          Settings
         </h1>
         <div className="mt-0.5 font-serif italic text-[14px]">
-          « To be lodged with the Editor. Effective from the next morning post. »
+          « Tell us what to put on your feed. Saved automatically. »
         </div>
       </header>
 
