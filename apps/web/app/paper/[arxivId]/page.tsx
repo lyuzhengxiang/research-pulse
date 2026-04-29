@@ -5,6 +5,7 @@ import { LivePulseCard } from '@/components/LivePulseCard';
 import { StarButton } from '@/components/StarButton';
 import { PaperLeadFigure } from '@/components/PaperLeadFigure';
 import { GenerateSummaryButton } from '@/components/GenerateSummaryButton';
+import { ensurePaperFigure } from '@/lib/figure';
 import type { Paper, PaperLink } from '@research-pulse/shared';
 
 export const dynamic = 'force-dynamic';
@@ -54,6 +55,7 @@ export default async function PaperPage({
   const abstractParas = paper.abstract.split(/\n\s*\n/).filter(Boolean);
   const firstPara = abstractParas[0] ?? paper.abstract ?? '';
   const restParas = abstractParas.slice(1);
+  const figureUrl = paper.figure_url ?? (await ensurePaperFigure(paper.arxiv_id));
 
   return (
     <article className="mx-auto max-w-[1100px] px-[60px] pb-9 pt-5">
@@ -114,11 +116,11 @@ export default async function PaperPage({
           <div>
             <PaperLeadFigure
               arxivId={paper.arxiv_id}
+              url={figureUrl}
               size={260}
-              caption="FIG. 2 · the latent space"
             />
             <div className="mt-1.5 text-center font-mono text-ticker uppercase tracking-mono-uc text-ink-mute">
-              FIG. 2 · diffusion through latent space
+              {figureUrl ? 'FIG. 1 · from the paper' : 'no figure available'}
             </div>
           </div>
           <div className="mt-4">

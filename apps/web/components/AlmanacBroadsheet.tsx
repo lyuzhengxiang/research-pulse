@@ -4,6 +4,7 @@ import { Telegrams, type Telegram } from './Telegrams';
 import { PaperLeadFigure } from './PaperLeadFigure';
 import { MorePapers } from './MorePapers';
 import type { FeedScope } from '@/lib/papers';
+import { ensurePaperFigure } from '@/lib/figure';
 
 function dropCap(s: string): { first: string; rest: string } {
   if (!s) return { first: '', rest: '' };
@@ -20,7 +21,7 @@ function relativeAge(iso: string): string {
   return `${d}d`;
 }
 
-export function AlmanacBroadsheet({
+export async function AlmanacBroadsheet({
   kicker,
   title,
   strapline,
@@ -57,6 +58,10 @@ export function AlmanacBroadsheet({
 
   const leadDrop = dropCap(lead.tldr || lead.abstract || '');
   const leadBody = lead.tldr || (lead.abstract ? lead.abstract.slice(0, 360) + '…' : 'Awaiting summary.');
+
+  // Lead figure: use cached URL if present, otherwise lazily fetch + cache
+  // (one HTTP call per home render at most, then never again for this paper).
+  const leadFigureUrl = lead.figure_url ?? (await ensurePaperFigure(lead.arxiv_id));
 
   return (
     <div>
@@ -111,7 +116,7 @@ export function AlmanacBroadsheet({
             {lead.authors.length > 3 && `, et al`} · published {relativeAge(lead.published_at)} ago
           </p>
           <div className="mt-3 flex items-start gap-3.5">
-            <PaperLeadFigure arxivId={lead.arxiv_id} caption="FIG. 1 · arch. diagram" />
+            <PaperLeadFigure arxivId={lead.arxiv_id} url={leadFigureUrl} size={150} />
             <p className="m-0 font-serif text-body">
               {leadDrop.first ? (
                 <>

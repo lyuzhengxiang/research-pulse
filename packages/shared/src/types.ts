@@ -10,6 +10,8 @@ export type Paper = {
   pulse_score: number;
   is_active: boolean;
   created_at: string;
+  figure_url: string | null;
+  figure_checked_at: string | null;
 };
 
 export type PaperLinkSource = 'github' | 'hn' | 'paperswithcode';
