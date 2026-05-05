@@ -32,8 +32,33 @@ export async function generateTldr(input: {
     throw new Error(`gpt-5.4 ${resp.status}: ${errText.slice(0, 200)}`);
   }
 
-  const json = (await resp.json()) as { output_text?: string };
-  const text = json.output_text?.trim();
-  if (!text) throw new Error('gpt-5.4 returned empty output_text');
+  type ResponsesPayload = {
+    output_text?: string;
+    output?: Array<{
+      type?: string;
+      content?: Array<{ type?: string; text?: string }>;
+    }>;
+    status?: string;
+    incomplete_details?: { reason?: string };
+  };
+  const json = (await resp.json()) as ResponsesPayload;
+
+  let text = json.output_text?.trim();
+  if (!text) {
+    const collected = (json.output ?? [])
+      .filter((item) => item.type === 'message')
+      .flatMap((item) => item.content ?? [])
+      .filter((c) => c.type === 'output_text' && typeof c.text === 'string')
+      .map((c) => c.text!)
+      .join('')
+      .trim();
+    if (collected) text = collected;
+  }
+
+  if (!text) {
+    const reason =
+      json.incomplete_details?.reason ?? json.status ?? 'no output_text in response';
+    throw new Error(`gpt-5.4 returned no text (${reason})`);
+  }
   return text;
 }
