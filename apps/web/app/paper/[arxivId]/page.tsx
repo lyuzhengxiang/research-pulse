@@ -6,7 +6,7 @@ import { StarButton } from '@/components/StarButton';
 import { PaperLeadFigure } from '@/components/PaperLeadFigure';
 import { GenerateSummaryButton } from '@/components/GenerateSummaryButton';
 import { PaperReactions } from '@/components/PaperReactions';
-import { PaperViewTracker } from '@/components/PaperViewTracker';
+import { ViewCounter } from '@/components/ViewCounter';
 import { ensurePaperFigure } from '@/lib/figure';
 import {
   REACTION_KINDS,
@@ -107,9 +107,7 @@ export default async function PaperPage({
         <div className="border-t border-ink-rule pt-3 -mt-3" />
         <div className="font-mono text-ticker uppercase tracking-kicker text-ink-mute">
           {paper.primary_category} · arxiv:{paper.arxiv_id} · published {relativeAge(paper.published_at)} ago
-          {paper.view_count > 0 && (
-            <> · {paper.view_count.toLocaleString()} viewed</>
-          )}
+          <ViewCounter arxivId={paper.arxiv_id} initialCount={paper.view_count ?? 0} />
         </div>
         <h1 className="my-1.5 font-serif text-[30px] font-bold tracking-mast leading-[1.05] sm:text-[40px] lg:text-title-xl lg:leading-[1.02]">
           {paper.title}
@@ -145,8 +143,6 @@ export default async function PaperPage({
           initialMine={myReactions}
         />
       </div>
-
-      <PaperViewTracker arxivId={paper.arxiv_id} />
 
       <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr] lg:gap-8">
         <div className="almanac-prose drop-cap order-2 lg:order-1 abstract-cols">
