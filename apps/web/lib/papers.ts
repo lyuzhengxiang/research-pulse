@@ -2,7 +2,7 @@ import 'server-only';
 import type { Paper, UserSubscription } from '@research-pulse/shared';
 import { createClient } from '@/lib/supabase/server';
 
-export type FeedScope = 'feed' | 'trending';
+export type FeedScope = 'feed' | 'trending' | 'most_viewed' | 'most_reacted';
 
 type Supa = Awaited<ReturnType<typeof createClient>>;
 
@@ -12,12 +12,13 @@ async function fetchTrending(
   supabase: Supa,
   offset: number,
   limit: number,
+  sortBy: 'pulse_score' | 'view_count' | 'reaction_count' = 'pulse_score',
 ): Promise<Paper[]> {
   const { data } = await supabase
     .from('papers')
     .select('*')
     .eq('is_active', true)
-    .order('pulse_score', { ascending: false })
+    .order(sortBy, { ascending: false })
     .order('published_at', { ascending: false })
     .range(offset, offset + limit - 1);
   return (data ?? []) as Paper[];
@@ -86,6 +87,8 @@ export async function fetchPapersPage(
   limit: number = PAGE_SIZE,
 ): Promise<Paper[]> {
   const supabase = await createClient();
-  if (scope === 'trending') return fetchTrending(supabase, offset, limit);
+  if (scope === 'trending') return fetchTrending(supabase, offset, limit, 'pulse_score');
+  if (scope === 'most_viewed') return fetchTrending(supabase, offset, limit, 'view_count');
+  if (scope === 'most_reacted') return fetchTrending(supabase, offset, limit, 'reaction_count');
   return fetchFeed(supabase, userId, offset, limit);
 }

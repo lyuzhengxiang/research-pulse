@@ -13,6 +13,7 @@ export type Paper = {
   figure_url: string | null;
   figure_checked_at: string | null;
   view_count: number;
+  reaction_count: number;
 };
 
 export type ReactionKind = 'thumbs_up' | 'fire' | 'thinking' | 'poop';

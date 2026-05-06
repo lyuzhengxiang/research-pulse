@@ -93,6 +93,12 @@ export async function AlmanacBroadsheet({
               <div className="mt-1 font-mono text-meta text-ink-mute">
                 #<span className="text-ink">{i + 2}</span> · pulse{' '}
                 <span className="tabnum text-ink">{p.pulse_score.toFixed(1)}</span>
+                {(p.view_count ?? 0) > 0 && (
+                  <> · <span className="tabnum text-ink">{p.view_count.toLocaleString()}</span>v</>
+                )}
+                {(p.reaction_count ?? 0) > 0 && (
+                  <> · <span className="tabnum text-ink">{p.reaction_count}</span>✦</>
+                )}
               </div>
             </Link>
           ))}
@@ -140,7 +146,7 @@ export async function AlmanacBroadsheet({
               )}
             </p>
           </div>
-          <div className="mt-3.5 flex gap-5 border-y border-ink-rule py-1.5 font-mono text-meta">
+          <div className="mt-3.5 flex flex-wrap items-center gap-x-5 gap-y-1 border-y border-ink-rule py-1.5 font-mono text-meta">
             <span>
               ★ <b className="tabnum">{(lead.pulse_score * 30).toFixed(0)}</b>
             </span>
@@ -150,6 +156,16 @@ export async function AlmanacBroadsheet({
             <span style={{ color: '#b1342a' }}>
               pulse <b className="tabnum">{lead.pulse_score.toFixed(1)}</b>
             </span>
+            {(lead.view_count ?? 0) > 0 && (
+              <span className="text-ink-mute">
+                <b className="tabnum text-ink">{lead.view_count.toLocaleString()}</b> viewed
+              </span>
+            )}
+            {(lead.reaction_count ?? 0) > 0 && (
+              <span className="text-ink-mute">
+                <b className="tabnum text-ink">{lead.reaction_count}</b> ✦
+              </span>
+            )}
             <Link
               href={`/paper/${encodeURIComponent(lead.arxiv_id)}`}
               className="almanac-link ml-auto"

@@ -88,6 +88,12 @@ export function MorePapers({
                 <div className="font-serif text-list font-semibold leading-snug">{p.title}</div>
                 <div className="mt-0.5 font-mono text-ticker text-ink-mute">
                   {p.primary_category} · {p.authors[0] ?? '—'} et al · {relativeAge(p.published_at)}
+                  {(p.view_count ?? 0) > 0 && (
+                    <> · <span className="tabnum">{p.view_count.toLocaleString()}</span> viewed</>
+                  )}
+                  {(p.reaction_count ?? 0) > 0 && (
+                    <> · <span className="tabnum">{p.reaction_count}</span> ✦</>
+                  )}
                 </div>
               </div>
               <div className="text-right font-mono text-meta">
