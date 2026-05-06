@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { MastheadNav } from './MastheadNav';
+import { MomentumExplainer } from './MomentumExplainer';
 
 const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
 
@@ -48,7 +49,7 @@ export async function Masthead() {
       </Link>
 
       <div className="mt-1 font-serif italic text-[14px] text-ink lg:text-[16px]">
-        « Live AI/ML papers, ranked by momentum »
+        « Live AI/ML papers, ranked by <MomentumExplainer /> »
         <span className="hidden lg:inline"> &nbsp;·&nbsp; </span>
         <Link
           href="/today"
