@@ -12,6 +12,30 @@ export type Paper = {
   created_at: string;
   figure_url: string | null;
   figure_checked_at: string | null;
+  view_count: number;
+};
+
+export type ReactionKind = 'thumbs_up' | 'fire' | 'thinking' | 'poop';
+
+export const REACTION_KINDS: ReactionKind[] = [
+  'thumbs_up',
+  'fire',
+  'thinking',
+  'poop',
+];
+
+export const REACTION_EMOJI: Record<ReactionKind, string> = {
+  thumbs_up: '👍',
+  fire: '🔥',
+  thinking: '🤔',
+  poop: '💩',
+};
+
+export type PaperReaction = {
+  arxiv_id: string;
+  user_id: string;
+  kind: ReactionKind;
+  created_at: string;
 };
 
 export type PaperLinkSource = 'github' | 'hn' | 'paperswithcode';

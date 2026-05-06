@@ -5,8 +5,15 @@ import { LivePulseCard } from '@/components/LivePulseCard';
 import { StarButton } from '@/components/StarButton';
 import { PaperLeadFigure } from '@/components/PaperLeadFigure';
 import { GenerateSummaryButton } from '@/components/GenerateSummaryButton';
+import { PaperReactions } from '@/components/PaperReactions';
+import { PaperViewTracker } from '@/components/PaperViewTracker';
 import { ensurePaperFigure } from '@/lib/figure';
-import type { Paper, PaperLink } from '@research-pulse/shared';
+import {
+  REACTION_KINDS,
+  type Paper,
+  type PaperLink,
+  type ReactionKind,
+} from '@research-pulse/shared';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,10 +36,19 @@ export default async function PaperPage({
   const arxivId = decodeURIComponent(rawArxivId);
   const supabase = await createClient();
 
-  const [{ data: paperRow }, { data: linkRows }, { data: { user } }] = await Promise.all([
+  const [
+    { data: paperRow },
+    { data: linkRows },
+    { data: { user } },
+    { data: reactionRows },
+  ] = await Promise.all([
     supabase.from('papers').select('*').eq('arxiv_id', arxivId).maybeSingle(),
     supabase.from('paper_links').select('*').eq('arxiv_id', arxivId),
     supabase.auth.getUser(),
+    supabase
+      .from('paper_reactions')
+      .select('user_id, kind')
+      .eq('arxiv_id', arxivId),
   ]);
 
   if (!paperRow) notFound();
@@ -40,6 +56,20 @@ export default async function PaperPage({
   const links = (linkRows ?? []) as PaperLink[];
   const github = links.find((l) => l.source === 'github' && l.external_id !== 'none');
   const hn = links.find((l) => l.source === 'hn');
+
+  const reactionCounts: Record<ReactionKind, number> = {
+    thumbs_up: 0,
+    fire: 0,
+    thinking: 0,
+    poop: 0,
+  };
+  const myReactions: ReactionKind[] = [];
+  for (const r of (reactionRows ?? []) as { user_id: string; kind: ReactionKind }[]) {
+    if (REACTION_KINDS.includes(r.kind)) {
+      reactionCounts[r.kind]++;
+      if (user && r.user_id === user.id) myReactions.push(r.kind);
+    }
+  }
 
   let starred = false;
   if (user) {
@@ -77,6 +107,9 @@ export default async function PaperPage({
         <div className="border-t border-ink-rule pt-3 -mt-3" />
         <div className="font-mono text-ticker uppercase tracking-kicker text-ink-mute">
           {paper.primary_category} · arxiv:{paper.arxiv_id} · published {relativeAge(paper.published_at)} ago
+          {paper.view_count > 0 && (
+            <> · {paper.view_count.toLocaleString()} viewed</>
+          )}
         </div>
         <h1 className="my-1.5 font-serif text-[30px] font-bold tracking-mast leading-[1.05] sm:text-[40px] lg:text-title-xl lg:leading-[1.02]">
           {paper.title}
@@ -104,6 +137,16 @@ export default async function PaperPage({
         signedIn={!!user}
       />
 
+      <div className="mt-4 flex justify-center">
+        <PaperReactions
+          arxivId={paper.arxiv_id}
+          userId={user?.id ?? null}
+          initialCounts={reactionCounts}
+          initialMine={myReactions}
+        />
+      </div>
+
+      <PaperViewTracker arxivId={paper.arxiv_id} />
 
       <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr] lg:gap-8">
         <div className="almanac-prose drop-cap order-2 lg:order-1 abstract-cols">
