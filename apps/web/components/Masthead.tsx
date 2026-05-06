@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { MastheadNav } from './MastheadNav';
+import { MastheadSearch } from './MastheadSearch';
 import { MomentumExplainer } from './MomentumExplainer';
 
 const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
@@ -61,6 +62,7 @@ export async function Masthead() {
       </div>
 
       <MastheadNav signedIn={!!user} userId={user?.id ?? null} />
+      <MastheadSearch />
     </header>
   );
 }
